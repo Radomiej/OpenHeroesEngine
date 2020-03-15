@@ -29,7 +29,7 @@ namespace OpenHeroesEngine.Game.Models
             return baseIndex;
         }
 
-        public Point GetPositionIndex(long index)
+        public Point GetPositionForIndex(long index)
         {
             if (_inverse_index_dimension)
             {

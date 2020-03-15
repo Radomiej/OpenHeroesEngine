@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.Game.Models;
 
@@ -6,9 +7,11 @@ namespace TestOpenHeroesEngine.Game.Models
 {
     public class TestGrid
     {
+        private GenericOpenHeroesRunner _runner;
         [SetUp]
         public void Setup()
         {
+            _runner = GenericOpenHeroesRunner.CreateInstance();
         }
 
         [Test]
@@ -37,11 +40,11 @@ namespace TestOpenHeroesEngine.Game.Models
             Assert.AreEqual(14, grid.GetNodeIndex(3, 2));
             Assert.AreEqual(15, grid.GetNodeIndex(3, 3));
 
-            Assert.AreEqual(new Point(0, 0), grid.GetPositionIndex(0));
-            Assert.AreEqual(new Point(0, 2), grid.GetPositionIndex(2));
-            Assert.AreEqual(new Point(1, 3), grid.GetPositionIndex(7));
-            Assert.AreEqual(new Point(3, 1), grid.GetPositionIndex(13));
-            Assert.AreEqual(new Point(3, 3), grid.GetPositionIndex(15));
+            Assert.AreEqual(new Point(0, 0), grid.GetPositionForIndex(0));
+            Assert.AreEqual(new Point(0, 2), grid.GetPositionForIndex(2));
+            Assert.AreEqual(new Point(1, 3), grid.GetPositionForIndex(7));
+            Assert.AreEqual(new Point(3, 1), grid.GetPositionForIndex(13));
+            Assert.AreEqual(new Point(3, 3), grid.GetPositionForIndex(15));
         }
         
         [Test]
@@ -62,11 +65,11 @@ namespace TestOpenHeroesEngine.Game.Models
             Assert.AreEqual(9, grid.GetNodeIndex(1, 2));
             Assert.AreEqual(13, grid.GetNodeIndex(1, 3));
             
-            Assert.AreEqual(new Point(0, 0), grid.GetPositionIndex(0));
-            Assert.AreEqual(new Point(0, 2), grid.GetPositionIndex(8));
-            Assert.AreEqual(new Point(1, 3), grid.GetPositionIndex(13));
-            Assert.AreEqual(new Point(1, 1), grid.GetPositionIndex(5));
-            Assert.AreEqual(new Point(1, 3), grid.GetPositionIndex(13));
+            Assert.AreEqual(new Point(0, 0), grid.GetPositionForIndex(0));
+            Assert.AreEqual(new Point(0, 2), grid.GetPositionForIndex(8));
+            Assert.AreEqual(new Point(1, 3), grid.GetPositionForIndex(13));
+            Assert.AreEqual(new Point(1, 1), grid.GetPositionForIndex(5));
+            Assert.AreEqual(new Point(1, 3), grid.GetPositionForIndex(13));
         }
     }
 }
