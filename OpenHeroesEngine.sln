@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenHeroesEngine", "OpenHeroesEngine\OpenHeroesEngine.csproj", "{32870E7D-0E60-4C7A-BC3D-B7059E5F1C70}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestOpenHeroesEngine", "TestOpenHeroesEngine\TestOpenHeroesEngine.csproj", "{AF4EE358-E3A1-4A86-8C6B-84D7A357FB68}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{32870E7D-0E60-4C7A-BC3D-B7059E5F1C70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32870E7D-0E60-4C7A-BC3D-B7059E5F1C70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32870E7D-0E60-4C7A-BC3D-B7059E5F1C70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32870E7D-0E60-4C7A-BC3D-B7059E5F1C70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF4EE358-E3A1-4A86-8C6B-84D7A357FB68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF4EE358-E3A1-4A86-8C6B-84D7A357FB68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF4EE358-E3A1-4A86-8C6B-84D7A357FB68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF4EE358-E3A1-4A86-8C6B-84D7A357FB68}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
