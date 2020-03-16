@@ -9,7 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Game\Components" />
+      <Folder Include="Game\AI" />
     </ItemGroup>
 
 </Project>

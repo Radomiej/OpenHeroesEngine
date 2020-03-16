@@ -1,0 +1,12 @@
+﻿namespace OpenHeroesEngine.Game.Models
+{
+    public class CreatureDefinition
+    {
+        public readonly string Name;
+
+        public CreatureDefinition(string name)
+        {
+            Name = name;
+        }
+    }
+}

@@ -1,5 +1,7 @@
 ﻿using System;
 using Artemis;
+using Artemis.Blackboard;
+using Artemis.System;
 using OpenHeroesEngine.Game.Events;
 using Radomiej.JavityBus;
 
@@ -15,6 +17,7 @@ namespace OpenHeroesEngine
         protected EntityWorld entityWorld;
         public GenericOpenHeroesRunner()
         {
+            EntitySystem.BlackBoard.SetEntry("EventBus", JEventBus.GetDefault());
             entityWorld = new EntityWorld(false, true, true) {PoolCleanupDelay = 1};
             JEventBus.GetDefault().Post(new CoreLoadedEvent());
         }

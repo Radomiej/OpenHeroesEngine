@@ -5,14 +5,16 @@ namespace OpenHeroesEngine.Artemis
 {
     public abstract class EventBasedSystem : EntitySystem
     {
+        protected JEventBus _eventBus;
         public override void LoadContent()
         {
-            JEventBus.GetDefault().Register(this);
+            _eventBus = BlackBoard.GetEntry<JEventBus>("EventBus");
+            _eventBus.Register(this);
         }
         
         public override void UnloadContent()
         {
-            JEventBus.GetDefault().Unregister(this);
+            _eventBus.Unregister(this);
         }
     }
 }
