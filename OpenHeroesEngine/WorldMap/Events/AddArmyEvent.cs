@@ -1,7 +1,7 @@
 ﻿using OpenHeroesEngine.AStar;
-using OpenHeroesEngine.Game.Components;
+using OpenHeroesEngine.WorldMap.Components;
 
-namespace OpenHeroesEngine.Game.Events
+namespace OpenHeroesEngine.WorldMap.Events
 {
     public class AddArmyEvent
     {

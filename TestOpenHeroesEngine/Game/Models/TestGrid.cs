@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
-using OpenHeroesEngine.Game.Models;
+using OpenHeroesEngine.WorldMap.Models;
 
 namespace TestOpenHeroesEngine.Game.Models
 {

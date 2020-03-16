@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
-using OpenHeroesEngine.Game.Events;
+using OpenHeroesEngine.WorldMap.Events;
 using Radomiej.JavityBus;
 
 namespace TestOpenHeroesEngine.Game.Pathfinder

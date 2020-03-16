@@ -3,11 +3,11 @@ using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
-using OpenHeroesEngine.Game.Events;
-using OpenHeroesEngine.Game.Models;
+using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 
-namespace OpenHeroesEngine.Game.Systems
+namespace OpenHeroesEngine.WorldMap.Systems
 {
     [ArtemisEntitySystem(GameLoopType = GameLoopType.Update)]
     public class PathfinderSystem : EventBasedSystem

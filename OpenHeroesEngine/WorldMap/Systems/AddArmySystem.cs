@@ -1,11 +1,11 @@
 ﻿using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
-using OpenHeroesEngine.Game.Components;
-using OpenHeroesEngine.Game.Events;
+using OpenHeroesEngine.WorldMap.Components;
+using OpenHeroesEngine.WorldMap.Events;
 using Radomiej.JavityBus;
 
-namespace OpenHeroesEngine.Game.Systems
+namespace OpenHeroesEngine.WorldMap.Systems
 {
     [ArtemisEntitySystem(GameLoopType = GameLoopType.Update)]
     public class AddArmySystem : EventBasedSystem

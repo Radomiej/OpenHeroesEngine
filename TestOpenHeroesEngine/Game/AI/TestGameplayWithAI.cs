@@ -2,9 +2,9 @@
 using NUnit.Framework;
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
-using OpenHeroesEngine.Game.Components;
-using OpenHeroesEngine.Game.Events;
-using OpenHeroesEngine.Game.Models;
+using OpenHeroesEngine.WorldMap.Components;
+using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 
 namespace TestOpenHeroesEngine.Game.AI

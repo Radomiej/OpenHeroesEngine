@@ -1,6 +1,6 @@
 ﻿using OpenHeroesEngine.AStar;
 
-namespace OpenHeroesEngine.Game.Models
+namespace OpenHeroesEngine.WorldMap.Models
 {
     public class Grid
     {

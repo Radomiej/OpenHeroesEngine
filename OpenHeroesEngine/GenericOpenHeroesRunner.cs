@@ -2,7 +2,7 @@
 using Artemis;
 using Artemis.Blackboard;
 using Artemis.System;
-using OpenHeroesEngine.Game.Events;
+using OpenHeroesEngine.WorldMap.Events;
 using Radomiej.JavityBus;
 
 namespace OpenHeroesEngine

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using OpenHeroesEngine.AStar;
 
-namespace OpenHeroesEngine.Game.Events
+namespace OpenHeroesEngine.WorldMap.Events
 {
     public class MoveToNextEvent
     {

@@ -1,9 +1,9 @@
 ﻿using Artemis;
 using Artemis.Attributes;
 using Artemis.Interface;
-using OpenHeroesEngine.Game.Components;
+using OpenHeroesEngine.WorldMap.Components;
 
-namespace OpenHeroesEngine.Game.Templates
+namespace OpenHeroesEngine.WorldMap.Templates
 {
     [ArtemisEntityTemplate("Army")]
     public class ArmyTemplate : IEntityTemplate

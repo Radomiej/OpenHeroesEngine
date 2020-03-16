@@ -2,10 +2,10 @@
 using Artemis.Attributes;
 using Artemis.Interface;
 using OpenHeroesEngine.AStar;
-using OpenHeroesEngine.Game.Components;
-using OpenHeroesEngine.Game.Models;
+using OpenHeroesEngine.WorldMap.Components;
+using OpenHeroesEngine.WorldMap.Models;
 
-namespace OpenHeroesEngine.Game.Templates
+namespace OpenHeroesEngine.WorldMap.Templates
 {
     [ArtemisEntityTemplate("Resource")]
     public class ResourceTemplate : IEntityTemplate

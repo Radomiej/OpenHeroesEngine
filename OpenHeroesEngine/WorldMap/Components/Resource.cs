@@ -1,7 +1,7 @@
 ﻿using Artemis;
 using Artemis.Attributes;
 
-namespace OpenHeroesEngine.Game.Models
+namespace OpenHeroesEngine.WorldMap.Models
 {
     [ArtemisComponentPool(InitialSize=100,IsResizable=true, ResizeSize=5, IsSupportMultiThread=false)]
     public class Resource : ComponentPoolable

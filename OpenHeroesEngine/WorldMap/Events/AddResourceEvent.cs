@@ -1,7 +1,7 @@
 ﻿using OpenHeroesEngine.AStar;
-using OpenHeroesEngine.Game.Models;
+using OpenHeroesEngine.WorldMap.Models;
 
-namespace OpenHeroesEngine.Game.Events
+namespace OpenHeroesEngine.WorldMap.Events
 {
     public class AddResourceEvent
     {
