@@ -1,8 +1,12 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Artemis;
 using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
@@ -13,17 +17,19 @@ namespace OpenHeroesEngine.WorldMap.Systems
     public class PathfinderSystem : EventBasedSystem
     {
         private PathFinder _pathFinder;
-        
+
         [Subscribe]
         public void WorldLoadedListener(WorldLoadedEvent worldLoadedEvent)
         {
             byte[,] calculateGrid = CalculateGrid(worldLoadedEvent.Grid);
             _pathFinder = new PathFinder(calculateGrid);
         }
+
         private byte[,] CalculateGrid(Grid grid)
         {
             byte[,] byteGrid = new byte[grid.Width, grid.Height];
-            for (int x = 0; x < byteGrid.GetLength(0); x += 1) {
+            for (int x = 0; x < byteGrid.GetLength(0); x += 1)
+            {
                 for (int y = 0; y < byteGrid.GetLength(1); y += 1)
                 {
                     byteGrid[x, y] = 1;

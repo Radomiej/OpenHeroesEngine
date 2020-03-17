@@ -1,4 +1,5 @@
 ﻿using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Models;
 
 namespace OpenHeroesEngine.WorldMap.Events

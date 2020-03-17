@@ -12,9 +12,9 @@ namespace OpenHeroesEngine.WorldMap.Templates
         {
             public Entity BuildEntity(Entity e, EntityWorld entityWorld, params object[] args)
             {
-                MovableEntity movableEntity = new MovableEntity();
-                movableEntity.Position = args[1] as Point;
-                e.AddComponent(movableEntity);
+                GeoEntity geoEntity = new GeoEntity();
+                geoEntity.Position = args[1] as Point;
+                e.AddComponent(geoEntity);
                 e.AddComponent(args[0] as Resource);
                 return e;
             }

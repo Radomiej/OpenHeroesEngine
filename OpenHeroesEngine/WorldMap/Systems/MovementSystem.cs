@@ -32,8 +32,8 @@ namespace OpenHeroesEngine.WorldMap.Systems
         public void MoveInListener(MoveInEvent moveOutEvent)
         {
             //Simulate re-thinking movement(for AI or Human to cancel movement action) - in this case just go to next
-            MoveToNextEvent moveToNextEvent = new MoveToNextEvent(moveOutEvent.MoveToNextEvent.CalculatedPath, moveOutEvent.MoveToNextEvent.CurrentIndex + 1);
-            JEventBus.GetDefault().Post(moveToNextEvent);
+            // MoveToNextEvent moveToNextEvent = new MoveToNextEvent(moveOutEvent.MoveToNextEvent.CalculatedPath, moveOutEvent.MoveToNextEvent.CurrentIndex + 1);
+            // JEventBus.GetDefault().Post(moveToNextEvent);
         }
     }
 }

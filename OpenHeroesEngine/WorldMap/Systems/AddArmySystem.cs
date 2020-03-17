@@ -17,8 +17,8 @@ namespace OpenHeroesEngine.WorldMap.Systems
             Army army = armyEntity.GetComponent<Army>();
             army.creatures = addArmyEvent.Army.creatures;
 
-            MovableEntity movableEntity = armyEntity.GetComponent<MovableEntity>();
-            movableEntity.Position = addArmyEvent.Position;
+            GeoEntity geoEntity = armyEntity.GetComponent<GeoEntity>();
+            geoEntity.Position = addArmyEvent.Position;
         }
     }
 }
