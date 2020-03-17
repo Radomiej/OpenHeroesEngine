@@ -34,7 +34,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
 
             for (int i = 0; i < 5; i++) //TODO hardcoded 5 step to move
             {
-                if (i >= findPathEvent.CalculatedPath.Count) break;
+                if (i >= findPathEvent.CalculatedPath.Count - 1) break;
                 Point goal = findPathEvent.CalculatedPath[i];
                 MoveToNextEvent moveToNextEvent = new MoveToNextEvent(findPathEvent.CalculatedPath, i);
                 JEventBus.GetDefault().Post(moveToNextEvent);
