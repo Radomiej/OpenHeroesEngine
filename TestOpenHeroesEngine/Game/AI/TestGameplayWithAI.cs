@@ -33,9 +33,9 @@ namespace TestOpenHeroesEngine.Game.AI
             {
                 Point position = new Point(random.Next(512), random.Next(512));
                 Resource resource = new Resource(resourceDefinition);
-                AddResourceEvent addResourceEvent =
-                    new AddResourceEvent(resource, position);
-                JEventBus.GetDefault().Post(addResourceEvent);
+                AddResourceOnWorldMapEvent addResourceOnWorldMapEvent =
+                    new AddResourceOnWorldMapEvent(resource, position);
+                JEventBus.GetDefault().Post(addResourceOnWorldMapEvent);
             }
         }
 
@@ -45,7 +45,7 @@ namespace TestOpenHeroesEngine.Game.AI
             Creature creature = new Creature(creatureDefinition, 10);
 
             Army army = new Army();
-            army.creatures.Add(creature);
+            army.Creatures.Add(creature);
 
             AddArmyEvent addArmyEvent = new AddArmyEvent(army, new Point(1, 1));
             JEventBus.GetDefault().Post(addArmyEvent);

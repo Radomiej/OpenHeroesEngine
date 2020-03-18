@@ -8,5 +8,10 @@ namespace OpenHeroesEngine.WorldMap.Components
     public class GeoEntity : ComponentPoolable
     {
         public Point Position;
+
+        public override void Initialize()
+        {
+            Position = null;
+        }
     }
 }

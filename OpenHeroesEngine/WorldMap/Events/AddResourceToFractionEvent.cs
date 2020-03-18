@@ -4,15 +4,15 @@ using OpenHeroesEngine.WorldMap.Models;
 
 namespace OpenHeroesEngine.WorldMap.Events
 {
-    public class AddResourceEvent
+    public class AddResourceToFractionEvent
     {
-        public readonly Point Position;
+        public readonly Fraction Fraction;
         public readonly Resource Resource;
 
-        public AddResourceEvent(Resource resource, Point position)
+        public AddResourceToFractionEvent(Resource resource, Fraction fraction)
         {
             Resource = resource;
-            Position = position;
+            Fraction = fraction;
         }
     }
 }

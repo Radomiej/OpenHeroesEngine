@@ -9,5 +9,10 @@ namespace OpenHeroesEngine.WorldMap.Components
     public class ArmyAi : ComponentPoolable
     {
         public StateMachine<ArmyState, ArmyTrigger> ArmyStateMachine;
+        
+        public override void Initialize()
+        {
+            ArmyStateMachine = null;
+        }
     }
 }

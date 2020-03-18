@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Artemis;
 using Artemis.Attributes;
 using Artemis.Manager;
@@ -34,6 +35,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
 
         public override void OnRemoved(Entity entity)
         {
+            Debug.WriteLine("ResourceAnalyzer REMOVE Resource. Exist: " + _resources.Count);
             _resources.Remove(entity);
         }
 

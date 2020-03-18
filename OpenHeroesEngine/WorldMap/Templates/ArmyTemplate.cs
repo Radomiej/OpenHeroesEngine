@@ -10,9 +10,9 @@ namespace OpenHeroesEngine.WorldMap.Templates
         {
             public Entity BuildEntity(Entity e, EntityWorld entityWorld, params object[] args)
             {
-                e.AddComponent(new GeoEntity());
-                e.AddComponent(new Army());
-                e.AddComponent(new ArmyAi());
+                e.AddComponent(entityWorld.GetComponentFromPool<GeoEntity>());
+                e.AddComponent(entityWorld.GetComponentFromPool<Army>());
+                e.AddComponent(entityWorld.GetComponentFromPool<ArmyAi>());
                 return e;
             }
     }

@@ -41,6 +41,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
             Entity nearestResource = findNearestResource.Nearest;
             if (nearestResource == null)
             {
+                Debug.WriteLine("ArmyAiSystem IDLE");
                 armyAi.ArmyStateMachine.Fire(ArmyTrigger.FinishAction);
                 return;
             }
@@ -48,6 +49,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
             GeoEntity resourcePosition = nearestResource.GetComponent<GeoEntity>();
             
             GoToEvent goToEvent = new GoToEvent(entity, resourcePosition.Position);
+            Debug.WriteLine("ArmyAiSystem Go For Resource: " + goToEvent.Goal);
             JEventBus.GetDefault().Post(goToEvent);
             
             armyAi.ArmyStateMachine.Fire(ArmyTrigger.FinishAction);

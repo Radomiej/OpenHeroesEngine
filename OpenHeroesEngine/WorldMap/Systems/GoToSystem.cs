@@ -32,11 +32,11 @@ namespace OpenHeroesEngine.WorldMap.Systems
                 return;
             }
 
-            for (int i = 0; i < 5; i++) //TODO hardcoded 5 step to move
+            for (int i = 0; i < 5; i++) //TODO Add Movement Cost Support
             {
                 if (i >= findPathEvent.CalculatedPath.Count - 1) break;
-                Point goal = findPathEvent.CalculatedPath[i];
-                MoveToNextEvent moveToNextEvent = new MoveToNextEvent(findPathEvent.CalculatedPath, i);
+                Point goal = findPathEvent.CalculatedPath[i + 1];
+                MoveToNextEvent moveToNextEvent = new MoveToNextEvent(findPathEvent.CalculatedPath, entity, i);
                 JEventBus.GetDefault().Post(moveToNextEvent);
                 geoEntity.Position = goal;
             }

@@ -15,7 +15,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
         {
             var armyEntity = entityWorld.CreateEntityFromTemplate("Army");
             Army army = armyEntity.GetComponent<Army>();
-            army.creatures = addArmyEvent.Army.creatures;
+            army.Creatures = addArmyEvent.Army.Creatures;
 
             GeoEntity geoEntity = armyEntity.GetComponent<GeoEntity>();
             geoEntity.Position = addArmyEvent.Position;

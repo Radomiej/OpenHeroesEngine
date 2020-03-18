@@ -44,6 +44,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
         {
             var result = _pathFinder.FindPath(findPathEvent.Start, findPathEvent.End);
             findPathEvent.CalculatedPath = result.Select(step => new Point(step.X, step.Y)).ToList();
+            findPathEvent.CalculatedPath.Reverse();
         }
     }
 }
