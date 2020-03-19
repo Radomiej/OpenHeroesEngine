@@ -34,7 +34,7 @@ namespace TestOpenHeroesEngine.Game.Pathfinder
             
             Assert.IsNotNull(findPathEvent.CalculatedPath);
             Assert.IsNotEmpty(findPathEvent.CalculatedPath);
-            Assert.AreEqual(3, findPathEvent.CalculatedPath.Count);
+            Assert.AreEqual(4, findPathEvent.CalculatedPath.Count);
         }
     }
 }
