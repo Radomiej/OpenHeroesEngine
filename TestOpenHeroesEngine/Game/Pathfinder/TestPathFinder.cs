@@ -25,5 +25,16 @@ namespace TestOpenHeroesEngine.Game.Pathfinder
             Assert.IsNotEmpty(findPathEvent.CalculatedPath);
             Assert.AreEqual(101, findPathEvent.CalculatedPath.Count);
         }
+        
+        [Test]
+        public void TestPathfinderTeleport()
+        {
+            FindPathEvent findPathEvent = new FindPathEvent(new Point(1, 1), new Point(16, 16));
+            JEventBus.GetDefault().Post(findPathEvent);
+            
+            Assert.IsNotNull(findPathEvent.CalculatedPath);
+            Assert.IsNotEmpty(findPathEvent.CalculatedPath);
+            Assert.AreEqual(3, findPathEvent.CalculatedPath.Count);
+        }
     }
 }

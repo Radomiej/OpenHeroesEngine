@@ -23,6 +23,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
         {
             byte[,] calculateGrid = CalculateGrid(worldLoadedEvent.Grid);
             _pathFinder = new PathFinder(calculateGrid);
+            _pathFinder.AddTeleport(new Point(2, 2), new Point(15, 15) );
         }
 
         private byte[,] CalculateGrid(Grid grid)
