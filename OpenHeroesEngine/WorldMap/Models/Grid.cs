@@ -22,6 +22,11 @@ namespace OpenHeroesEngine.WorldMap.Models
             _inverse_index_dimension = _height > _width;
         }
 
+        public long GetNodeIndex(Point position)
+        {
+            return GetNodeIndex(position.X, position.Y);
+        }
+
         public long GetNodeIndex(int x, int y)
         {
             long baseIndex = _inverse_index_dimension ? y * _height : x * _width;
