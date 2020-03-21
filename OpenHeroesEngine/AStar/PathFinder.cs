@@ -238,7 +238,7 @@ namespace OpenHeroesEngine.AStar
         }
 
 
-        internal void ChangeCostOfMove(int x, int y, byte cost)
+        public void ChangeCostOfMove(int x, int y, byte cost)
         {
             _grid[x, y] = cost;
         }

@@ -15,8 +15,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
         [Subscribe]
         public void WorldLoadedListener(CoreLoadedEvent coreLoadedEvent)
         {
-            _grid = new Grid(512, 512);
-            BlackBoard.SetEntry("Grid", _grid);
+            _grid = BlackBoard.GetEntry<Grid>("Grid");
             JEventBus.GetDefault().Post(new WorldLoadedEvent(_grid));
         }
     }

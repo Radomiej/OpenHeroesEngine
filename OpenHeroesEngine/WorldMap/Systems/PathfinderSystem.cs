@@ -17,13 +17,16 @@ namespace OpenHeroesEngine.WorldMap.Systems
     public class PathfinderSystem : EventBasedSystem
     {
         private PathFinder _pathFinder;
+        private Grid _grid;
+
+        private Dictionary<long, Entity> _nodeToEntityLinker = new Dictionary<long, Entity>(500);
 
         [Subscribe]
         public void WorldLoadedListener(WorldLoadedEvent worldLoadedEvent)
         {
-            byte[,] calculateGrid = CalculateGrid(worldLoadedEvent.Grid);
+            _grid = worldLoadedEvent.Grid;
+            byte[,] calculateGrid = CalculateGrid(_grid);
             _pathFinder = new PathFinder(calculateGrid);
-            _pathFinder.AddTeleport(new Point(2, 2), new Point(15, 15) );
         }
 
         private byte[,] CalculateGrid(Grid grid)
@@ -46,6 +49,52 @@ namespace OpenHeroesEngine.WorldMap.Systems
             var result = _pathFinder.FindPath(findPathEvent.Start, findPathEvent.End);
             findPathEvent.CalculatedPath = result.Select(step => new Point(step.X, step.Y)).ToList();
             findPathEvent.CalculatedPath.Reverse();
+        }
+
+        [Subscribe]
+        public void IsFreeAreaListener(IsFreeAreaEvent isFreeAreaEvent)
+        {
+            int positionX = isFreeAreaEvent.Position.X;
+            int sizeX = isFreeAreaEvent.Size.X;
+
+            int startX = sizeX > 0 ? positionX : positionX + sizeX;
+            int endX = sizeX > 0 ? positionX + sizeX : positionX;
+
+            int positionY = isFreeAreaEvent.Position.Y;
+            int sizeY = isFreeAreaEvent.Size.Y;
+
+            int startY = sizeY > 0 ? positionY : positionY + sizeY;
+            int endY = sizeY > 0 ? positionY + sizeY : positionY;
+
+            for (int x = startX; x < endX; x++)
+            {
+                for (int y = startY; y < endY; y++)
+                {
+                    var index = _grid.GetNodeIndex(x, y);
+                    if (_nodeToEntityLinker.ContainsKey(index))
+                    {
+                        return;
+                    }
+                }
+            }
+
+            isFreeAreaEvent.IsFree = true;
+        }
+
+        [Subscribe]
+        public void PlaceObjectOnMapListener(PlaceObjectOnMapEvent placeObjectOnMapEvent)
+        {
+            SquareForeach squareForeach = new SquareForeach(placeObjectOnMapEvent.Position, placeObjectOnMapEvent.Size);
+            squareForeach.Data = placeObjectOnMapEvent;
+            squareForeach.ForEach(PlaceObject);
+        }
+
+        private void PlaceObject(int x, int y, object data)
+        {
+            PlaceObjectOnMapEvent placeObjectOnMapEvent = data as PlaceObjectOnMapEvent;
+            var index = _grid.GetNodeIndex(x, y);
+            _nodeToEntityLinker.Add(index, placeObjectOnMapEvent.Entity);
+            _pathFinder.ChangeCostOfMove(x, y, 0);
         }
     }
 }
