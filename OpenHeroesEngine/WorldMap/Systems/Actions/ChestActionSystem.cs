@@ -58,9 +58,22 @@ namespace OpenHeroesEngine.WorldMap.Systems
             Action action = new Action(_actionDefinition);
             action.AddParam("gold", 1500);
             
-            DynamicActionEvent dynamicActionEvent = new DynamicActionEvent(action, _actionAnswers);
+            DynamicActionEvent dynamicActionEvent = new DynamicActionEvent(action, _actionAnswers, moveInEvent.MoveToNextEvent.Owner);
             _eventBus.Post(dynamicActionEvent);
             Debug.WriteLine("Chest Taken");
+        }
+        
+        [Subscribe]
+        private void AnswerToActionListener(ActionResponseEvent actionResponseEvent)
+        {
+          if(!actionResponseEvent.ActionEvent.Action.Definition.Name.Equals("ChestAction")) return;
+
+          Entity owner = actionResponseEvent.ActionEvent.Target;
+          Fraction fraction = owner.GetComponent<Army>().Fraction;
+          int amount = (int) actionResponseEvent.ActionEvent.Action.Params["gold"];
+          Resource resource = new Resource(new ResourceDefinition("Gold"), amount);
+          AddResourceToFractionEvent addResourceToFractionEvent = new AddResourceToFractionEvent(resource, fraction);
+          _eventBus.Post(addResourceToFractionEvent);
         }
     }
 }

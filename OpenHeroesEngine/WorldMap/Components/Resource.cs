@@ -25,5 +25,10 @@ namespace OpenHeroesEngine.WorldMap.Components
             Definition = null;
             Amount = 0;
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(Definition)}: {Definition}, {nameof(Amount)}: {Amount}";
+        }
     }
 }

@@ -5,6 +5,7 @@ using Artemis.Blackboard;
 using Artemis.Manager;
 using Artemis.System;
 using OpenHeroesEngine.WorldMap.AI;
+using OpenHeroesEngine.WorldMap.AI.Decisions;
 using OpenHeroesEngine.WorldMap.AI.State;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
@@ -16,6 +17,14 @@ namespace OpenHeroesEngine.WorldMap.Systems
     [ArtemisEntitySystem(GameLoopType = GameLoopType.Update)]
     public class ArmyAiSystem : EntityProcessingSystem
     {
+        private JEventBus _eventBus;
+
+        public override void LoadContent()
+        {
+            base.LoadContent();
+            _eventBus = BlackBoard.GetEntry<JEventBus>("EventBus");
+        }
+
         public override void OnAdded(Entity entity)
         {
             var armyAi = entity.GetComponent<ArmyAi>();
@@ -24,37 +33,12 @@ namespace OpenHeroesEngine.WorldMap.Systems
             
             armyStateMachine.Configure(ArmyState.Idle).Permit(ArmyTrigger.GoTo, ArmyState.TakePosition);
             armyStateMachine.Configure(ArmyState.Idle).Permit(ArmyTrigger.FindResources, ArmyState.SearchForResource);
-            armyStateMachine.Configure(ArmyState.SearchForResource).OnEntry(t => GoToNearestResource(entity));
             armyStateMachine.Configure(ArmyState.SearchForResource).PermitReentry(ArmyTrigger.FindResources);
             
             armyStateMachine.Configure(ArmyState.SearchForResource).Permit(ArmyTrigger.FinishAction, ArmyState.Idle);
         }
 
-        private void GoToNearestResource(Entity entity)
-        {
-            GeoEntity geoEntity = entity.GetComponent<GeoEntity>();
-            ArmyAi armyAi = entity.GetComponent<ArmyAi>();
-            
-            FindNearestResource findNearestResource = new FindNearestResource(geoEntity.Position);
-            JEventBus.GetDefault().Post(findNearestResource);
-            
-            Entity nearestResource = findNearestResource.Nearest;
-            if (nearestResource == null)
-            {
-                Debug.WriteLine("ArmyAiSystem IDLE");
-                armyAi.ArmyStateMachine.Fire(ArmyTrigger.FinishAction);
-                return;
-            }
-           
-            GeoEntity resourcePosition = nearestResource.GetComponent<GeoEntity>();
-            
-            GoToEvent goToEvent = new GoToEvent(entity, resourcePosition.Position);
-            Debug.WriteLine("ArmyAiSystem Go For Resource: " + goToEvent.Goal);
-            JEventBus.GetDefault().Post(goToEvent);
-            
-            armyAi.ArmyStateMachine.Fire(ArmyTrigger.FinishAction);
-        }
-
+     
         public ArmyAiSystem() : base(Aspect.All(typeof(Army), typeof(GeoEntity), typeof(ArmyAi)))
         {
           
@@ -62,10 +46,13 @@ namespace OpenHeroesEngine.WorldMap.Systems
 
         public override void Process(Entity entity)
         {
-            Army army = entity.GetComponent<Army>();
-            GeoEntity geoEntity = entity.GetComponent<GeoEntity>();
             ArmyAi armyAi = entity.GetComponent<ArmyAi>();
-            armyAi.ArmyStateMachine.Fire(ArmyTrigger.FindResources);
+            
+            IDecisionThinker decisionThinker = armyAi.DecisionThinkers[armyAi.ArmyStateMachine.State];
+            _eventBus.Register(armyAi.DefaultDecisionThinker);
+            armyAi.DefaultDecisionThinker.Think(entity, _eventBus);
+            decisionThinker.Think(entity, _eventBus);
+            _eventBus.Unregister(armyAi.DefaultDecisionThinker);
             // Debug.WriteLine("Update AI");
         }
     }

@@ -13,10 +13,11 @@ namespace OpenHeroesEngine.WorldMap.Events
         public readonly List<ActionAnswer> ActionAnswers;
         public readonly Entity Target;
 
-        public DynamicActionEvent(Action action, List<ActionAnswer> actionAnswers)
+        public DynamicActionEvent(Action action, List<ActionAnswer> actionAnswers, Entity target = null)
         {
             Action = action;
             ActionAnswers = actionAnswers;
+            Target = target;
         }
     }
 }

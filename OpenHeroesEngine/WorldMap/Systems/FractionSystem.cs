@@ -1,4 +1,5 @@
-﻿using Artemis.Attributes;
+﻿using System.Diagnostics;
+using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.WorldMap.Components;
@@ -9,7 +10,7 @@ using Radomiej.JavityBus;
 namespace OpenHeroesEngine.WorldMap.Systems
 {
     [ArtemisEntitySystem(GameLoopType = GameLoopType.Update)]
-    public class FactionSystem : EventBasedSystem
+    public class FractionSystem : EventBasedSystem
     {
         [Subscribe]
         public void AddResourceListener(AddResourceToFractionEvent addResourceToFractionEvent)
@@ -25,6 +26,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
             }
 
             fraction.Resources[resource.Definition.Name].Amount += resource.Amount;
+            Debug.WriteLine("Resource updated: " + fraction.Resources[resource.Definition.Name]);
         }
     }
 }
