@@ -36,5 +36,10 @@ namespace OpenHeroesEngine.AStar
         {
             return HashCode.Combine(X, Y);
         }
+
+        public static float Distance(Point left, Point right)
+        {
+            return (float) Math.Sqrt(Math.Pow((right.X - left.X), 2) + Math.Pow((right.Y - left.Y), 2));
+        }
     }
 }

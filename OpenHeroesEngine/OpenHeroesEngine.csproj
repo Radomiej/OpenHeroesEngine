@@ -6,10 +6,7 @@
 
     <ItemGroup>
       <PackageReference Include="Artemis" Version="2.0.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Game\AI" />
+      <PackageReference Include="Stateless" Version="5.0.0" />
     </ItemGroup>
 
 </Project>

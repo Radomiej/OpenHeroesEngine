@@ -136,11 +136,13 @@ namespace OpenHeroesEngine.AStar
                         _horiz = (locationX - _mCalcGrid[location].PX);
                     }
 
+                    var directionFor = GetDirectionFor(location);
+                    int size = directionFor.GetLength(0);
                     //Lets calculate each successors
-                    for (var i = 0; i < (_diagonals ? 8 : 4); i++)
+                    for (var i = 0; i < size; i++)
                     {
-                        var newLocationX = (ushort)(locationX + _direction[i, 0]);
-                        var newLocationY = (ushort)(locationY + _direction[i, 1]);
+                        var newLocationX = (ushort)(locationX + directionFor[i, 0]);
+                        var newLocationY = (ushort)(locationY + directionFor[i, 1]);
                         var newLocation = (newLocationY << _gridYLog2) + newLocationX;
 
                         if (newLocationX >= _gridX || newLocationY >= _gridY)
@@ -235,7 +237,8 @@ namespace OpenHeroesEngine.AStar
             }
         }
 
-        internal void ChangeCostOfMove(int x, int y, byte cost)
+
+        public void ChangeCostOfMove(int x, int y, byte cost)
         {
             _grid[x, y] = cost;
         }
@@ -277,6 +280,36 @@ namespace OpenHeroesEngine.AStar
             _closed.Add(fNode);
 
             return _closed;
+        }
+
+        private Dictionary<int, sbyte[,]> teleports = new Dictionary<int, sbyte[,]>(100);
+        public void AddTeleport(Point start, Point end)
+        {
+            int startIndex = (start.Y << _gridYLog2) + start.X;
+            int endIndex =  (end.Y << _gridYLog2) + end.X;
+
+            sbyte startOffsetX = (sbyte) (end.X - start.X);
+            sbyte startOffsetY = (sbyte) (end.Y - start.Y);
+            
+            sbyte endOffsetX = (sbyte) (start.X - end.X);
+            sbyte endOffsetY = (sbyte) (start.Y - end.Y);
+            
+            sbyte[,] _startDirection = _diagonals
+                ? new sbyte[,] { { 0, -1 }, { 1, 0 }, { 0, 1 }, { -1, 0 }, { 1, -1 }, { 1, 1 }, { -1, 1 }, { -1, -1 }, {startOffsetX, startOffsetY} }
+                : new sbyte[,] { { 0, -1 }, { 1, 0 }, { 0, 1 }, { -1, 0 }, {startOffsetX, startOffsetY} };
+            
+            sbyte[,] _endDirection = _diagonals
+                ? new sbyte[,] { { 0, -1 }, { 1, 0 }, { 0, 1 }, { -1, 0 }, { 1, -1 }, { 1, 1 }, { -1, 1 }, { -1, -1 }, {endOffsetX, endOffsetY} }
+                : new sbyte[,] { { 0, -1 }, { 1, 0 }, { 0, 1 }, { -1, 0 }, {endOffsetX, endOffsetY} };
+            
+            teleports.Add(startIndex, _startDirection);
+            teleports.Add(endIndex, _endDirection);
+        }
+        
+        private sbyte[,] GetDirectionFor(in int location)
+        {
+            if (teleports.ContainsKey(location)) return teleports[location];
+            return _direction;
         }
     }
 }

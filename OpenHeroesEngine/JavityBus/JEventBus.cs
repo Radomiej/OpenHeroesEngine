@@ -69,7 +69,7 @@ namespace Radomiej.JavityBus
             for (int i = 0; i < receiverDelegates.Count; i++)
             {
                 Delegate delegateToInvoke = receiverDelegates[i];
-                if(delegateToInvoke != null) delegateToInvoke.DynamicInvoke(eventObject);
+                delegateToInvoke?.DynamicInvoke(eventObject);
             }
         }
 
