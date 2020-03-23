@@ -7,8 +7,8 @@ using OpenHeroesEngine.WorldMap.Models;
 
 namespace OpenHeroesEngine.WorldMap.Templates
 {
-    [ArtemisEntityTemplate("Obstacle")]
-    public class ObstacleTemplate : IEntityTemplate
+    [ArtemisEntityTemplate("Structure")]
+    public class StructureTemplate : IEntityTemplate
     {
         public Entity BuildEntity(Entity e, EntityWorld entityWorld, params object[] args)
         {
@@ -16,11 +16,12 @@ namespace OpenHeroesEngine.WorldMap.Templates
             geoEntity.Position = args[1] as Point;
             e.AddComponent(geoEntity);
 
-            Obstacle argObstacle = args[0] as Obstacle;
-            Obstacle obstacle = entityWorld.GetComponentFromPool<Obstacle>();
-            obstacle.Definition = argObstacle.Definition;
+            Structure argStructure = args[0] as Structure;
+            Structure structure = entityWorld.GetComponentFromPool<Structure>();
+            structure.Definition = argStructure.Definition;
             
-            e.AddComponent(obstacle);
+            e.AddComponent(structure);
+            
             return e;
         }
     }

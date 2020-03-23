@@ -5,7 +5,6 @@ using Artemis;
 using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
-using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
@@ -13,7 +12,7 @@ using OpenHeroesEngine.WorldMap.Models.Actions;
 using Radomiej.JavityBus;
 using Action = OpenHeroesEngine.WorldMap.Models.Actions.Action;
 
-namespace OpenHeroesEngine.WorldMap.Systems
+namespace OpenHeroesEngine.WorldMap.Systems.Actions
 {
     [ArtemisEntitySystem(GameLoopType = GameLoopType.Update)]
     public class ChestActionSystem : EventBasedSystem

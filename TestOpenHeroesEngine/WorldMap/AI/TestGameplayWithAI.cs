@@ -16,12 +16,49 @@ namespace TestOpenHeroesEngine.Game.AI
         {
             var runner = GenericOpenHeroesRunner.CreateInstance();
             AddArmy();
+            AddBuildings();
             AddResources();
             AddObstacles();
             for (int i = 0; i < 1000; i++)
             {
                 runner.Draw();
                 runner.Update();
+            }
+        }
+
+        private void AddBuildings()
+        {
+            AddGoldMines();
+            AddPeasantHabitats();
+        }
+
+        private void AddGoldMines()
+        {
+            Random random = new Random(93);
+
+            StructureDefinition structureDefinition = new StructureDefinition("GoldMine", new Point(2, 1));
+            for (int i = 0; i < 15; i++)
+            {
+                Point position = new Point(random.Next(512), random.Next(512));
+                Structure structure = new Structure(structureDefinition);
+                AddStructureOnWorldMapEvent addStructureOnWorldMapEvent =
+                    new AddStructureOnWorldMapEvent(structure, position);
+                JEventBus.GetDefault().Post(addStructureOnWorldMapEvent);
+            }
+        }
+        
+        private void AddPeasantHabitats()
+        {
+            Random random = new Random(93);
+
+            StructureDefinition structureDefinition = new StructureDefinition("PeasantHabitat", new Point(2, 1));
+            for (int i = 0; i < 15; i++)
+            {
+                Point position = new Point(random.Next(512), random.Next(512));
+                Structure structure = new Structure(structureDefinition);
+                AddStructureOnWorldMapEvent addStructureOnWorldMapEvent =
+                    new AddStructureOnWorldMapEvent(structure, position);
+                JEventBus.GetDefault().Post(addStructureOnWorldMapEvent);
             }
         }
 
@@ -45,7 +82,7 @@ namespace TestOpenHeroesEngine.Game.AI
                 JEventBus.GetDefault().Post(addObstacleOnWorldMapEvent);
             }
         }
-        
+
         private static void AddObstacleMountains()
         {
             Random random = new Random(789);
@@ -81,7 +118,7 @@ namespace TestOpenHeroesEngine.Game.AI
                 JEventBus.GetDefault().Post(addResourceOnWorldMapEvent);
             }
         }
-        
+
         private static void AddChests()
         {
             Random random = new Random(1234);

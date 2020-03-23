@@ -12,6 +12,14 @@ namespace OpenHeroesEngine.WorldMap.Systems
     [ArtemisEntitySystem(GameLoopType = GameLoopType.Update)]
     public class FractionSystem : EventBasedSystem
     {
+        private Grid _grid;
+
+        public override void LoadContent()
+        {
+            base.LoadContent();
+            _grid = BlackBoard.GetEntry<Grid>("Grid");
+        }
+
         [Subscribe]
         public void AddResourceListener(AddResourceToFractionEvent addResourceToFractionEvent)
         {
@@ -27,6 +35,25 @@ namespace OpenHeroesEngine.WorldMap.Systems
 
             fraction.Resources[resource.Definition.Name].Amount += resource.Amount;
             Debug.WriteLine("Resource updated: " + fraction.Resources[resource.Definition.Name]);
+        }
+        
+        [Subscribe]
+        public void AddStructureListener(AddStructureToFractionEvent addStructureToFractionEvent)
+        {
+            Fraction newFraction = addStructureToFractionEvent.Fraction;
+            Structure structure = addStructureToFractionEvent.Structure;
+            Fraction oldFraction = structure.Fraction;
+            GeoEntity geoEntity = addStructureToFractionEvent.Entity.GetComponent<GeoEntity>();
+            long geoIndex = _grid.GetNodeIndex(geoEntity.Position);
+            
+            if(newFraction == oldFraction) return;
+
+
+            oldFraction?.Structures.Remove(geoIndex);
+            newFraction?.Structures.Add(geoIndex, structure);
+            structure.Fraction = newFraction;
+
+            Debug.WriteLine("Mines captured updated: " + newFraction?.Structures[geoIndex]);
         }
     }
 }
