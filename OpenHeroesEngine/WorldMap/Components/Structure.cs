@@ -27,7 +27,7 @@ namespace OpenHeroesEngine.WorldMap.Components
 
         public override string ToString()
         {
-            return $"{nameof(Definition)}: {Definition}, {nameof(Fraction)}: {Fraction}";
+            return $"Structure {Definition.Name}, {nameof(Fraction)}: {Fraction.Name}";
         }
     }
 }

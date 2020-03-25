@@ -28,7 +28,7 @@ namespace OpenHeroesEngine.WorldMap.Components
 
         public override string ToString()
         {
-            return $"{nameof(Definition)}: {Definition}, {nameof(Amount)}: {Amount}";
+            return $"{Definition.Name}: {Amount}";
         }
     }
 }

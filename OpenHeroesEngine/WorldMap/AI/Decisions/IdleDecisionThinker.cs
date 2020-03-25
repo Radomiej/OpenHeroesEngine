@@ -9,7 +9,7 @@ namespace OpenHeroesEngine.WorldMap.AI.Decisions
     {
         public void Think(Entity thinker, JEventBus eventBus)
         {
-            thinker.GetComponent<ArmyAi>().ArmyStateMachine.Fire(ArmyTrigger.FindResources);
+            thinker.GetComponent<ArmyAi>().ArmyStateMachine.Fire(ArmyTrigger.FindStructure);
         }
     }
 }

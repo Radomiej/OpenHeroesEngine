@@ -17,6 +17,7 @@ namespace OpenHeroesEngine.WorldMap.AI.Decisions
             _eventBus = eventBus;
             GeoEntity geoEntity = thinker.GetComponent<GeoEntity>();
             ArmyAi armyAi = thinker.GetComponent<ArmyAi>();
+            Army army = thinker.GetComponent<Army>();
             
             FindNearestResource findNearestResource = new FindNearestResource(geoEntity.Position);
             JEventBus.GetDefault().Post(findNearestResource);
@@ -24,7 +25,7 @@ namespace OpenHeroesEngine.WorldMap.AI.Decisions
             Entity nearestResource = findNearestResource.Nearest;
             if (nearestResource == null)
             {
-                Debug.WriteLine("ArmyAiSystem IDLE");
+                Debug.WriteLine(army + " Skip to IDLE");
                 armyAi.ArmyStateMachine.Fire(ArmyTrigger.FinishAction);
                 return;
             }
@@ -32,7 +33,7 @@ namespace OpenHeroesEngine.WorldMap.AI.Decisions
             GeoEntity resourcePosition = nearestResource.GetComponent<GeoEntity>();
             
             GoToEvent goToEvent = new GoToEvent(thinker, resourcePosition.Position);
-            Debug.WriteLine("ArmyAiSystem Go For Resource: " + goToEvent.Goal);
+            Debug.WriteLine(army + " Go For Resource: " + goToEvent.Goal);
             JEventBus.GetDefault().Post(goToEvent);
             
             armyAi.ArmyStateMachine.Fire(ArmyTrigger.FinishAction);

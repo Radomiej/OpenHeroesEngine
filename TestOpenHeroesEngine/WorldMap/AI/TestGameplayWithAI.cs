@@ -15,7 +15,8 @@ namespace TestOpenHeroesEngine.Game.AI
         public void TestCreateRunnerAndInvokeGameLoop()
         {
             var runner = GenericOpenHeroesRunner.CreateInstance();
-            AddArmy();
+            AddArmy("Red", new Point(1, 1));
+            AddArmy("Blue", new Point(128, 128));
             AddBuildings();
             AddResources();
             AddObstacles();
@@ -134,15 +135,16 @@ namespace TestOpenHeroesEngine.Game.AI
             }
         }
 
-        private void AddArmy()
+        private void AddArmy(string name, Point startPosition)
         {
             CreatureDefinition creatureDefinition = new CreatureDefinition("Ork");
             Creature creature = new Creature(creatureDefinition, 10);
 
             Army army = new Army();
+            army.Fraction = new Fraction(name);
             army.Creatures.Add(creature);
 
-            AddArmyEvent addArmyEvent = new AddArmyEvent(army, new Point(1, 1));
+            AddArmyEvent addArmyEvent = new AddArmyEvent(army, startPosition);
             JEventBus.GetDefault().Post(addArmyEvent);
         }
     }

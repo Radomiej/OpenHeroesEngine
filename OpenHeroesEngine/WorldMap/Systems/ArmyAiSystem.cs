@@ -32,10 +32,13 @@ namespace OpenHeroesEngine.WorldMap.Systems
             armyAi.ArmyStateMachine = armyStateMachine;
             
             armyStateMachine.Configure(ArmyState.Idle).Permit(ArmyTrigger.GoTo, ArmyState.TakePosition);
-            armyStateMachine.Configure(ArmyState.Idle).Permit(ArmyTrigger.FindResources, ArmyState.SearchForResource);
-            armyStateMachine.Configure(ArmyState.SearchForResource).PermitReentry(ArmyTrigger.FindResources);
+            armyStateMachine.Configure(ArmyState.Idle).Permit(ArmyTrigger.FindStructure, ArmyState.SearchForStructure);
             
+            armyStateMachine.Configure(ArmyState.SearchForResource).PermitReentry(ArmyTrigger.FindResources);
             armyStateMachine.Configure(ArmyState.SearchForResource).Permit(ArmyTrigger.FinishAction, ArmyState.Idle);
+           
+            armyStateMachine.Configure(ArmyState.SearchForStructure).Permit(ArmyTrigger.FindResources, ArmyState.SearchForResource);
+            armyStateMachine.Configure(ArmyState.SearchForStructure).Permit(ArmyTrigger.FinishAction, ArmyState.Idle);
         }
 
      

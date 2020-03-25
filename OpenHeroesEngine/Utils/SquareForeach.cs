@@ -26,7 +26,13 @@ namespace OpenHeroesEngine
 
         public void ForEach(SingleNodeHandler singleNodeHandler)
         {
-            
+            for (int x = StartX; x < EndX; x++)
+            {
+                for (int y = StartY; y < EndY; y++)
+                {
+                    singleNodeHandler(x, y, Data);
+                }
+            }
         }
     }
 }

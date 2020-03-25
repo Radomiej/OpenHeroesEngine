@@ -2,6 +2,6 @@
 {
     public enum ArmyState
     {
-        Idle, SearchForResource, SearchForEnemy, TakePosition
+        Idle, SearchForResource, SearchForEnemy, SearchForStructure, TakePosition
     }
 }

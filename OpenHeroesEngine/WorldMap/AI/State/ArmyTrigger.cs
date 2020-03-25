@@ -2,6 +2,6 @@
 {
     public enum ArmyTrigger
     {
-        FinishAction, GoTo, FindResources
+        FinishAction, GoTo, FindResources, FindStructure
     }
 }

@@ -46,9 +46,15 @@ namespace OpenHeroesEngine.WorldMap.Systems
         [Subscribe]
         public void FindPathListener(FindPathEvent findPathEvent)
         {
+            byte costOfMove = _pathFinder.GetCostOfMove(findPathEvent.End.X, findPathEvent.End.Y);
+            _pathFinder.ChangeCostOfMove(findPathEvent.End.X, findPathEvent.End.Y, 1);
+            
             var result = _pathFinder.FindPath(findPathEvent.Start, findPathEvent.End);
             findPathEvent.CalculatedPath = result.Select(step => new Point(step.X, step.Y)).ToList();
             findPathEvent.CalculatedPath.Reverse();
+            
+            _pathFinder.ChangeCostOfMove(findPathEvent.End.X, findPathEvent.End.Y, costOfMove);
+
         }
 
         [Subscribe]
@@ -66,6 +72,11 @@ namespace OpenHeroesEngine.WorldMap.Systems
             int startY = sizeY > 0 ? positionY : positionY + sizeY;
             int endY = sizeY > 0 ? positionY + sizeY : positionY;
 
+            //Bound checker
+            if(startX < 0 || endX >= _grid.Width) return;
+            if(startY < 0 || endY >= _grid.Height) return;
+            
+            //Obstackle checker
             for (int x = startX; x < endX; x++)
             {
                 for (int y = startY; y < endY; y++)
@@ -95,6 +106,13 @@ namespace OpenHeroesEngine.WorldMap.Systems
             var index = _grid.GetNodeIndex(x, y);
             _nodeToEntityLinker.Add(index, placeObjectOnMapEvent.Entity);
             _pathFinder.ChangeCostOfMove(x, y, 0);
+        }
+        
+        private void UnplaceObject(int x, int y)
+        {
+            var index = _grid.GetNodeIndex(x, y);
+            _nodeToEntityLinker.Remove(index);
+            _pathFinder.ChangeCostOfMove(x, y, 1);
         }
     }
 }

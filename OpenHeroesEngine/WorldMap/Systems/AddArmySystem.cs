@@ -13,12 +13,9 @@ namespace OpenHeroesEngine.WorldMap.Systems
         [Subscribe]
         public void AddArmyListener(AddArmyEvent addArmyEvent)
         {
-            var armyEntity = entityWorld.CreateEntityFromTemplate("Army");
+            var armyEntity = entityWorld.CreateEntityFromTemplate("Army", addArmyEvent.Army, addArmyEvent.Position);
             Army army = armyEntity.GetComponent<Army>();
             army.Creatures = addArmyEvent.Army.Creatures;
-
-            GeoEntity geoEntity = armyEntity.GetComponent<GeoEntity>();
-            geoEntity.Position = addArmyEvent.Position;
         }
     }
 }

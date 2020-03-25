@@ -34,7 +34,10 @@ namespace OpenHeroesEngine.WorldMap.Systems
             }
 
             fraction.Resources[resource.Definition.Name].Amount += resource.Amount;
-            Debug.WriteLine("Resource updated: " + fraction.Resources[resource.Definition.Name]);
+
+            string changedValue = resource.Amount >= 0 ? "+" : "-";
+            changedValue += resource.Amount;
+            Debug.WriteLine($"Resource of {fraction.Name} changed: " + fraction.Resources[resource.Definition.Name] + $"({changedValue})");
         }
         
         [Subscribe]
@@ -53,7 +56,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
             newFraction?.Structures.Add(geoIndex, structure);
             structure.Fraction = newFraction;
 
-            Debug.WriteLine("Mines captured updated: " + newFraction?.Structures[geoIndex]);
+            Debug.WriteLine("Mines captured: " + newFraction?.Structures[geoIndex]);
         }
     }
 }

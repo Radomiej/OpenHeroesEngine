@@ -20,5 +20,7 @@ namespace OpenHeroesEngine.WorldMap.Components
             ArmyStateMachine = null;
             DecisionThinkers.Clear();
         }
+        
+        
     }
 }
