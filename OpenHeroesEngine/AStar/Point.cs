@@ -41,5 +41,15 @@ namespace OpenHeroesEngine.AStar
         {
             return (float) Math.Sqrt(Math.Pow((right.X - left.X), 2) + Math.Pow((right.Y - left.Y), 2));
         }
+        
+        public static Point operator +(Point left, Point right)
+        {
+            return new Point(right.X + left.X, right.Y + left.Y);
+        }
+        
+        public static Point operator -(Point left, Point right)
+        {
+            return new Point(right.X - left.X, right.Y - left.Y);
+        }
     }
 }

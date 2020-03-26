@@ -2,8 +2,9 @@
 {
     public class Node
     {
-        public int Type { get; }
-        public int WalkableType { get; }
-        public int Variation { get; }
+        public int Type;
+        public int WalkableType;
+        public int Variation;
+        public int MovementCost;
     }
 }

@@ -1,35 +1,19 @@
 ﻿using NUnit.Framework;
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.Dijkstra;
 using OpenHeroesEngine.WorldMap.Events;
 using Radomiej.JavityBus;
 
 namespace TestOpenHeroesEngine.Game.Pathfinder
 {
-    public class TestPathFinder
+    public class TestDijkstraPathFinder
     {
-        private GenericOpenHeroesRunner _runner;
-        [SetUp]
-        public void Setup()
-        {
-            _runner = GenericOpenHeroesRunner.CreateInstance();
-        }
 
         [Test]
-        public void TestPathfinderSystem()
+        public void TestPathfinder()
         {
-            FindPathEvent findPathEvent = new FindPathEvent(new Point(0, 0), new Point(100, 100));
-            JEventBus.GetDefault().Post(findPathEvent);
-            
-            Assert.IsNotNull(findPathEvent.CalculatedPath);
-            Assert.IsNotEmpty(findPathEvent.CalculatedPath);
-            Assert.AreEqual(101, findPathEvent.CalculatedPath.Count);
-        }
-        
-        [Test]
-        public void TestPathfinderTeleport()
-        {
-            PathFinder pathFinder = new PathFinder(new byte[,]
+            DijkstraPathFinder pathFinder = new DijkstraPathFinder(new byte[,]
             {
                 {1, 1, 1, 1, 1, 1, 1, 1},
                 {1, 1, 1, 1, 1, 1, 1, 1},
@@ -40,12 +24,13 @@ namespace TestOpenHeroesEngine.Game.Pathfinder
                 {1, 1, 1, 1, 1, 1, 1, 1},
                 {1, 1, 1, 1, 1, 1, 1, 1}
             });
-            pathFinder.AddTeleport(new Point(1, 1), new Point(6, 6));
-            var result = pathFinder.FindPath(new Point(0, 0), new Point(7, 7));
+            var result = pathFinder.GetHexesInMovementRange(new Point(4, 4), 3);
             
             Assert.IsNotNull(result);
-            Assert.IsNotEmpty(result);
-            Assert.AreEqual(4, result.Count);
+            Assert.IsNotEmpty(result.tileReturnPath);
+            // Assert.AreEqual(4, result.Count);
+
+            var pathfindingResult = pathFinder.Find(new Point(4, 4), new Point(6, 2), result);
         }
         
         [Test]
