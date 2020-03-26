@@ -36,7 +36,13 @@ namespace OpenHeroesEngine.WorldMap.Systems
         public override void OnRemoved(Entity entity)
         {
             Debug.WriteLine("ArmyAnalyze REMOVE Army. Exist: " + _armies.Count);
-            _armies.Remove(entity);
+            if (_armies.Contains(entity)) _armies.Remove(entity);
+        }
+
+        [Subscribe]
+        public void ArmyLoseListener(ArmyLoseEvent armyLoseEvent)
+        {
+            _armies.Remove(armyLoseEvent.Army);
         }
 
         [Subscribe]
@@ -50,21 +56,22 @@ namespace OpenHeroesEngine.WorldMap.Systems
                 if (distance <= findArmyInArea.MaxDistance) findArmyInArea.Results.Add(entity);
             }
         }
-        
+
         [Subscribe]
         public void MoveInListener(MoveInEvent moveInEvent)
         {
             FindArmyInArea findArmyInArea = new FindArmyInArea(moveInEvent.Current, 1);
             FindArmyInAreaListener(findArmyInArea);
-            
-            if(findArmyInArea.Results.Count < 2) return;
+
+            if (findArmyInArea.Results.Count < 2) return;
 
             Army attacker = findArmyInArea.Results[0].GetComponent<Army>();
             Army defender = findArmyInArea.Results[1].GetComponent<Army>();
-            
-            BattleEncounterEvent battleEncounterEvent = new BattleEncounterEvent(findArmyInArea.Results[0], findArmyInArea.Results[1], moveInEvent.Current);
-            _eventBus.Post(battleEncounterEvent);
+
             Debug.WriteLine($"BATTLE ENCOUNTER {attacker} VS {defender}");
+            BattleEncounterEvent battleEncounterEvent = new BattleEncounterEvent(findArmyInArea.Results[0],
+                findArmyInArea.Results[1], moveInEvent.Current);
+            _eventBus.Post(battleEncounterEvent);
         }
     }
 }

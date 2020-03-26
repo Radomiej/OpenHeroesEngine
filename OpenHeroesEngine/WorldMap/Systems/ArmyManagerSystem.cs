@@ -8,7 +8,7 @@ using Radomiej.JavityBus;
 namespace OpenHeroesEngine.WorldMap.Systems
 {
     [ArtemisEntitySystem(GameLoopType = GameLoopType.Update)]
-    public class AddArmySystem : EventBasedSystem
+    public class ArmyManagerSystem : EventBasedSystem
     {
         [Subscribe]
         public void AddArmyListener(AddArmyEvent addArmyEvent)
@@ -16,6 +16,12 @@ namespace OpenHeroesEngine.WorldMap.Systems
             var armyEntity = entityWorld.CreateEntityFromTemplate("Army", addArmyEvent.Army, addArmyEvent.Position);
             Army army = armyEntity.GetComponent<Army>();
             army.Creatures = addArmyEvent.Army.Creatures;
+        }
+        
+        [Subscribe]
+        public void ArmyLoseListener(ArmyLoseEvent armyLoseEvent)
+        {
+            entityWorld.DeleteEntity(armyLoseEvent.Army);
         }
     }
 }
