@@ -41,6 +41,7 @@ namespace OpenHeroesEngine.WorldMap.Templates
                 armyAi.DecisionThinkers.Add(ArmyState.Idle, new IdleDecisionThinker());
                 armyAi.DecisionThinkers.Add(ArmyState.SearchForResource, new SearchForResourceDecisionThinker());
                 armyAi.DecisionThinkers.Add(ArmyState.SearchForStructure, new SearchForStructureDecisionThinker());
+                armyAi.DecisionThinkers.Add(ArmyState.SearchForEnemy, new ArmyEncounterDecisionThinker());
                 
                 return armyAi;
             }
