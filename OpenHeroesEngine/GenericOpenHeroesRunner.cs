@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Artemis;
 using Artemis.Blackboard;
 using Artemis.System;
+using OpenHeroesEngine.MapReader;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
@@ -11,17 +12,20 @@ namespace OpenHeroesEngine
 {
     public class GenericOpenHeroesRunner
     {
-        public static GenericOpenHeroesRunner CreateInstance()
+        public static GenericOpenHeroesRunner CreateInstance(Homm3MapLoader mapLoader = null)
         {
-            return new GenericOpenHeroesRunner();
+            return new GenericOpenHeroesRunner(mapLoader);
         }
 
         protected EntityWorld entityWorld;
-        public GenericOpenHeroesRunner()
+
+        public GenericOpenHeroesRunner(IMapLoader mapLoader = null)
         {
+            int? internalMapSize = mapLoader?.GetMapSize();
             EntitySystem.BlackBoard.SetEntry("EventBus", JEventBus.GetDefault());
             EntitySystem.BlackBoard.SetEntry("Grid", new Grid(512, 512));
             entityWorld = new EntityWorld(false, true, true) {PoolCleanupDelay = 1};
+            mapLoader?.LoadMap(entityWorld);
             JEventBus.GetDefault().Post(new CoreLoadedEvent());
         }
 
@@ -40,7 +44,7 @@ namespace OpenHeroesEngine
                 Debug.WriteLine("Are Actions To Finish");
                 return;
             }
-            
+
             entityWorld.Update(1000);
         }
     }

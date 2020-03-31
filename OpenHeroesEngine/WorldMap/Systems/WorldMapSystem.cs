@@ -18,5 +18,11 @@ namespace OpenHeroesEngine.WorldMap.Systems
             _grid = BlackBoard.GetEntry<Grid>("Grid");
             JEventBus.GetDefault().Post(new WorldLoadedEvent(_grid));
         }
+        
+        [Subscribe]
+        public void GeoIndexListener(GeoIndexReceiverEvent geoIndexReceiverEvent)
+        {
+            geoIndexReceiverEvent.GeoIndex = _grid.GetNodeIndex(geoIndexReceiverEvent.PointToTranslate);
+        }
     }
 }

@@ -21,6 +21,33 @@ namespace OpenHeroesEngine.WorldMap.Systems
         }
 
         [Subscribe]
+        public void RemoveResourceListener(RemoveResourceFromFractionEvent removeResourceFromFraction)
+        {
+            if(removeResourceFromFraction.Fraction == null) return;
+            Fraction fraction = removeResourceFromFraction.Fraction;
+            Resource resource = removeResourceFromFraction.Resource;
+
+            if (!fraction.Resources.ContainsKey(resource.Definition.Name))
+            {
+               //The faction has no resources of this type
+               return;
+            }
+
+            if (fraction.Resources[resource.Definition.Name].Amount >= resource.Amount) // The faction can afford to buy MAX
+            {
+                removeResourceFromFraction.Success = true;
+            }
+            else if(removeResourceFromFraction.Dividend > 0)//The factions can afford to buy parts
+            {
+                int parts = fraction.Resources[resource.Definition.Name].Amount % removeResourceFromFraction.Dividend;
+                int realCost = parts * removeResourceFromFraction.Dividend;
+                Resource realResourceCost = new Resource(removeResourceFromFraction.Resource.Definition, realCost);
+                ChangeResourceAmount(fraction, realResourceCost);
+                removeResourceFromFraction.CountOfDividend = parts;
+            }
+        }
+
+        [Subscribe]
         public void AddResourceListener(AddResourceToFractionEvent addResourceToFractionEvent)
         {
             if(addResourceToFractionEvent.Fraction == null) return;
@@ -33,13 +60,19 @@ namespace OpenHeroesEngine.WorldMap.Systems
                 fraction.Resources.Add(resource.Definition.Name, fractionResource);
             }
 
+            ChangeResourceAmount(fraction, resource);
+        }
+
+        private static void ChangeResourceAmount(Fraction fraction, Resource resource)
+        {
             fraction.Resources[resource.Definition.Name].Amount += resource.Amount;
 
             string changedValue = resource.Amount >= 0 ? "+" : "-";
             changedValue += resource.Amount;
-            Debug.WriteLine($"Resource of {fraction.Name} changed: " + fraction.Resources[resource.Definition.Name] + $"({changedValue})");
+            Debug.WriteLine($"Resource of {fraction.Name} changed: " + fraction.Resources[resource.Definition.Name] +
+                            $"({changedValue})");
         }
-        
+
         [Subscribe]
         public void AddStructureListener(AddStructureToFractionEvent addStructureToFractionEvent)
         {

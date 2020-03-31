@@ -145,6 +145,7 @@ namespace Radomiej.JavityBus
 
         public void ClearAll()
         {
+            subscribtions.Clear();
             recivers.Clear();
         }
     }

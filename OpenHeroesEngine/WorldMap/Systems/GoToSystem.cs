@@ -46,6 +46,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
             }
 
             Debug.WriteLine("GoTo OK: " + geoEntity.Position);
+            if (geoEntity.Position.Equals(goToEvent.Goal)) goToEvent.Complete = true;
         }
     }
 }

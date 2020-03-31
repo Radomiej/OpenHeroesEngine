@@ -21,12 +21,18 @@ namespace OpenHeroesEngine.WorldMap.Systems
 
         private Dictionary<long, Entity> _nodeToEntityLinker = new Dictionary<long, Entity>(500);
 
+        public override void LoadContent()
+        {
+            base.LoadContent();
+            _grid = BlackBoard.GetEntry<Grid>("Grid");
+            byte[,] calculateGrid = CalculateGrid(_grid);
+            _pathFinder = new PathFinder(calculateGrid);
+        }
+
         [Subscribe]
         public void WorldLoadedListener(WorldLoadedEvent worldLoadedEvent)
         {
-            _grid = worldLoadedEvent.Grid;
-            byte[,] calculateGrid = CalculateGrid(_grid);
-            _pathFinder = new PathFinder(calculateGrid);
+            //TODO use or remove
         }
 
         private byte[,] CalculateGrid(Grid grid)
@@ -104,6 +110,10 @@ namespace OpenHeroesEngine.WorldMap.Systems
         {
             PlaceObjectOnMapEvent placeObjectOnMapEvent = data as PlaceObjectOnMapEvent;
             var index = _grid.GetNodeIndex(x, y);
+            if (_nodeToEntityLinker.ContainsKey(index))
+            {
+                Debug.WriteLine("Attend to override object");
+            }
             _nodeToEntityLinker.Add(index, placeObjectOnMapEvent.Entity);
             _pathFinder.ChangeCostOfMove(x, y, 0);
         }
