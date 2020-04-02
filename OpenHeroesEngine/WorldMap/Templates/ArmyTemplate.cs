@@ -1,6 +1,7 @@
 ﻿using Artemis;
 using Artemis.Attributes;
 using Artemis.Interface;
+using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.AI.Decisions;
 using OpenHeroesEngine.WorldMap.AI.State;
 using OpenHeroesEngine.WorldMap.Components;
@@ -13,16 +14,23 @@ namespace OpenHeroesEngine.WorldMap.Templates
         {
             public Entity BuildEntity(Entity e, EntityWorld entityWorld, params object[] args)
             {
-                e.AddComponent(entityWorld.GetComponentFromPool<GeoEntity>());
-                e.AddComponent(PrepareArmy(entityWorld));
+                Point position = args[1] as Point;
+                GeoEntity geoEntity = entityWorld.GetComponentFromPool<GeoEntity>();
+                geoEntity.Position = position;
+                
+                Army argArmy = args[0] as Army;
+                
+                e.AddComponent(geoEntity);
+                e.AddComponent(PrepareArmy(entityWorld, argArmy));
                 e.AddComponent(PrepareArmyAi(entityWorld));
                 return e;
             }
 
-            private Army PrepareArmy(EntityWorld entityWorld)
+            private Army PrepareArmy(EntityWorld entityWorld, Army argArmy)
             {
                 Army army = entityWorld.GetComponentFromPool<Army>();
-                army.Fraction = new Fraction("Red");
+                army.Creatures = argArmy.Creatures;
+                army.Fraction = argArmy.Fraction;
                 return army;
             }
 
@@ -32,6 +40,8 @@ namespace OpenHeroesEngine.WorldMap.Templates
                 armyAi.DefaultDecisionThinker = new DefaultDecisionThinker();
                 armyAi.DecisionThinkers.Add(ArmyState.Idle, new IdleDecisionThinker());
                 armyAi.DecisionThinkers.Add(ArmyState.SearchForResource, new SearchForResourceDecisionThinker());
+                armyAi.DecisionThinkers.Add(ArmyState.SearchForStructure, new SearchForStructureDecisionThinker());
+                armyAi.DecisionThinkers.Add(ArmyState.SearchForEnemy, new ArmyEncounterDecisionThinker());
                 
                 return armyAi;
             }

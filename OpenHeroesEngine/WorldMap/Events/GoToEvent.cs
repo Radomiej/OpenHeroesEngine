@@ -8,6 +8,8 @@ namespace OpenHeroesEngine.WorldMap.Events
     {
         public readonly Point Goal;
         public readonly Entity Entity;
+        public bool Complete { get; set; }
+
 
         public GoToEvent(Entity entity, Point goal)
         {

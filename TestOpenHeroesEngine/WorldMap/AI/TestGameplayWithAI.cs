@@ -15,13 +15,51 @@ namespace TestOpenHeroesEngine.Game.AI
         public void TestCreateRunnerAndInvokeGameLoop()
         {
             var runner = GenericOpenHeroesRunner.CreateInstance();
-            AddArmy();
+            AddArmy("Red", new Point(1, 1));
+            AddArmy("Blue", new Point(128, 128));
+            AddBuildings();
             AddResources();
             AddObstacles();
             for (int i = 0; i < 1000; i++)
             {
                 runner.Draw();
                 runner.Update();
+            }
+        }
+
+        private void AddBuildings()
+        {
+            AddGoldMines();
+            AddPeasantHabitats();
+        }
+
+        private void AddGoldMines()
+        {
+            Random random = new Random(93);
+
+            StructureDefinition structureDefinition = new StructureDefinition("GoldMine", new Point(2, 1));
+            for (int i = 0; i < 15; i++)
+            {
+                Point position = new Point(random.Next(512), random.Next(512));
+                Structure structure = new Structure(structureDefinition);
+                AddStructureOnWorldMapEvent addStructureOnWorldMapEvent =
+                    new AddStructureOnWorldMapEvent(structure, position);
+                JEventBus.GetDefault().Post(addStructureOnWorldMapEvent);
+            }
+        }
+        
+        private void AddPeasantHabitats()
+        {
+            Random random = new Random(93);
+
+            StructureDefinition structureDefinition = new StructureDefinition("PeasantHabitat", new Point(2, 1));
+            for (int i = 0; i < 15; i++)
+            {
+                Point position = new Point(random.Next(512), random.Next(512));
+                Structure structure = new Structure(structureDefinition);
+                AddStructureOnWorldMapEvent addStructureOnWorldMapEvent =
+                    new AddStructureOnWorldMapEvent(structure, position);
+                JEventBus.GetDefault().Post(addStructureOnWorldMapEvent);
             }
         }
 
@@ -45,7 +83,7 @@ namespace TestOpenHeroesEngine.Game.AI
                 JEventBus.GetDefault().Post(addObstacleOnWorldMapEvent);
             }
         }
-        
+
         private static void AddObstacleMountains()
         {
             Random random = new Random(789);
@@ -81,7 +119,7 @@ namespace TestOpenHeroesEngine.Game.AI
                 JEventBus.GetDefault().Post(addResourceOnWorldMapEvent);
             }
         }
-        
+
         private static void AddChests()
         {
             Random random = new Random(1234);
@@ -97,15 +135,16 @@ namespace TestOpenHeroesEngine.Game.AI
             }
         }
 
-        private void AddArmy()
+        private void AddArmy(string name, Point startPosition)
         {
             CreatureDefinition creatureDefinition = new CreatureDefinition("Ork");
             Creature creature = new Creature(creatureDefinition, 10);
 
             Army army = new Army();
+            army.Fraction = new Fraction(name);
             army.Creatures.Add(creature);
 
-            AddArmyEvent addArmyEvent = new AddArmyEvent(army, new Point(1, 1));
+            AddArmyEvent addArmyEvent = new AddArmyEvent(army, startPosition);
             JEventBus.GetDefault().Post(addArmyEvent);
         }
     }

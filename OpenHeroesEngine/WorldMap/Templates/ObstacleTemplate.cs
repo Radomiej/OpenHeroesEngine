@@ -20,7 +20,7 @@ namespace OpenHeroesEngine.WorldMap.Templates
             Obstacle obstacle = entityWorld.GetComponentFromPool<Obstacle>();
             obstacle.Definition = argObstacle.Definition;
             
-            e.AddComponent(args[0] as Obstacle);
+            e.AddComponent(obstacle);
             return e;
         }
     }

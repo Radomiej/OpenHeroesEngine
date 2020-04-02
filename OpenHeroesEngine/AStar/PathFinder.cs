@@ -242,6 +242,11 @@ namespace OpenHeroesEngine.AStar
         {
             _grid[x, y] = cost;
         }
+        
+        public byte GetCostOfMove(int x, int y)
+        {
+           return  _grid[x, y];
+        }
 
         private List<PathFinderNode> OrderClosedListAsPath(Point end)
         {

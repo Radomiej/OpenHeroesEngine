@@ -1,10 +1,17 @@
 ﻿using NUnit.Framework;
 using OpenHeroesEngine;
+using Radomiej.JavityBus;
 
 namespace TestOpenHeroesEngine.Game.Runners
 {
     public class TestInitGenericRunner
     {
+        [SetUp]
+        public void Setup()
+        {
+            JEventBus.GetDefault().ClearAll();
+        }
+        
         [Test]
         public void TestCreateRunnerAndInvokeGameLoop()
         {

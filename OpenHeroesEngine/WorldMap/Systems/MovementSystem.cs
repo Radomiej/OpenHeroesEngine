@@ -2,6 +2,7 @@
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
 using Radomiej.JavityBus;
 
@@ -24,6 +25,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
         public void MoveOutListener(MoveOutEvent moveOutEvent)
         {
             //Simulate drawing move army animations - in this case just skip
+            moveOutEvent.MoveToNextEvent.Owner.GetComponent<GeoEntity>().Position = moveOutEvent.Next;
             MoveInEvent moveInEvent = new MoveInEvent(moveOutEvent.Next, moveOutEvent.Current, moveOutEvent.MoveToNextEvent);
             JEventBus.GetDefault().Post(moveInEvent);
         }

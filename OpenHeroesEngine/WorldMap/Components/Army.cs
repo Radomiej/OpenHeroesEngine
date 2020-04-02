@@ -16,5 +16,10 @@ namespace OpenHeroesEngine.WorldMap.Components
             Fraction = null;
             Creatures.Clear();
         }
+
+        public override string ToString()
+        {
+            return $"Army of {Fraction.Name}";
+        }
     }
 }

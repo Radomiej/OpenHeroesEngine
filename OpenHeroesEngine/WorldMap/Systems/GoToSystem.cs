@@ -32,16 +32,21 @@ namespace OpenHeroesEngine.WorldMap.Systems
                 return;
             }
 
+            //Go to the same place (SPACE)
+            if (findPathEvent.CalculatedPath.Count == 1)
+            {
+                findPathEvent.CalculatedPath.Add(findPathEvent.CalculatedPath[0]);
+            }
+            
             for (int i = 0; i < 5; i++) //TODO Add Movement Cost Support
             {
                 if (i >= findPathEvent.CalculatedPath.Count - 1) break;
-                Point goal = findPathEvent.CalculatedPath[i + 1];
                 MoveToNextEvent moveToNextEvent = new MoveToNextEvent(findPathEvent.CalculatedPath, entity, i);
                 JEventBus.GetDefault().Post(moveToNextEvent);
-                geoEntity.Position = goal;
             }
 
             Debug.WriteLine("GoTo OK: " + geoEntity.Position);
+            if (geoEntity.Position.Equals(goToEvent.Goal)) goToEvent.Complete = true;
         }
     }
 }
