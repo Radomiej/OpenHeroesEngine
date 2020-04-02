@@ -30,13 +30,13 @@ namespace OpenHeroesEngine.WorldMap.Systems
         }
         
         [Subscribe]
-        private void PreNextTurnListener(PreNextTurnEvent preNextTurnEvent)
+        private void PreNextTurnListener(CanNextTurnEvent canNextTurnEvent)
         {
             if(_onGoingActions.Count == 0) return;
 
             foreach (var action in _onGoingActions.Values)
             {
-                preNextTurnEvent.AddTurnBlocker(new FinishActionBlocker(action));
+                canNextTurnEvent.AddTurnBlocker(new FinishActionBlocker(action));
             }
         }
     }
