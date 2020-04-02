@@ -23,7 +23,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
 
             if (!isFreeAreaEvent.IsFree)
             {
-                Debug.WriteLine("Area is blocked! " + isFreeAreaEvent);
+                // Debug.WriteLine("Area is blocked! " + isFreeAreaEvent);
                 return;
             }
 

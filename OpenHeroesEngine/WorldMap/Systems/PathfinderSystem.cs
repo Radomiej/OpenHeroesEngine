@@ -56,9 +56,12 @@ namespace OpenHeroesEngine.WorldMap.Systems
             _pathFinder.ChangeCostOfMove(findPathEvent.End.X, findPathEvent.End.Y, 1);
             
             var result = _pathFinder.FindPath(findPathEvent.Start, findPathEvent.End);
-            findPathEvent.CalculatedPath = result.Select(step => new Point(step.X, step.Y)).ToList();
-            findPathEvent.CalculatedPath.Reverse();
-            
+            if (result != null)
+            {
+                findPathEvent.CalculatedPath = result.Select(step => new Point(step.X, step.Y)).ToList();
+                findPathEvent.CalculatedPath.Reverse();
+            }
+
             _pathFinder.ChangeCostOfMove(findPathEvent.End.X, findPathEvent.End.Y, costOfMove);
 
         }

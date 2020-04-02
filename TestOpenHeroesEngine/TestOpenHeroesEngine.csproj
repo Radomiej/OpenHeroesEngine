@@ -25,6 +25,10 @@
       <EmbeddedResource Include="Resources\wings of war.h3m.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
+      <None Remove="Resources\invasion.h3m.json" />
+      <EmbeddedResource Include="Resources\invasion.h3m.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>

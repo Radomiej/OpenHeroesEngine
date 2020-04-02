@@ -10,7 +10,7 @@ namespace OpenHeroesEngine.WorldMap.Templates
     [ArtemisEntityTemplate("Mine")]
     public class MineTemplate : IEntityTemplate
     {
-        public new Entity BuildEntity(Entity e, EntityWorld entityWorld, params object[] args)
+        public Entity BuildEntity(Entity e, EntityWorld entityWorld, params object[] args)
         {
             GeoEntity geoEntity = entityWorld.GetComponentFromPool<GeoEntity>();
             geoEntity.Position = args[1] as Point;

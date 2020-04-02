@@ -31,6 +31,11 @@ namespace OpenHeroesEngine.WorldMap.AI.Decisions
                 long geoIndex = GetGeoIndex(structureGeo.Position);
                 if (StructureIsVisited(geoIndex, armyAi) || structure.Fraction == army.Fraction)
                     continue;
+                //Check accessibility
+                FindPathEvent findPathEvent = new FindPathEvent(geoEntity.Position, structureGeo.Position);
+                _eventBus.Post(findPathEvent);
+                if(findPathEvent.CalculatedPath == null) continue;
+                
                 nearestStructure = structureEntity;
                 break;
             }

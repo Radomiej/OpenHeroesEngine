@@ -19,17 +19,29 @@ namespace OpenHeroesEngine.WorldMap.AI.Decisions
             ArmyAi armyAi = thinker.GetComponent<ArmyAi>();
             Army army = thinker.GetComponent<Army>();
             
-            FindNearestResource findNearestResource = new FindNearestResource(geoEntity.Position);
-            JEventBus.GetDefault().Post(findNearestResource);
-            
-            Entity nearestResource = findNearestResource.Nearest;
+            FindResourceInArea findResourceInArea = new FindResourceInArea(geoEntity.Position, 10);
+            JEventBus.GetDefault().Post(findResourceInArea);
+
+            Entity nearestResource = null;
+            foreach (var resourceEntity in findResourceInArea.Results)
+            {
+                Resource resource = resourceEntity.GetComponent<Resource>();
+                GeoEntity resourceGeo = resourceEntity.GetComponent<GeoEntity>();
+               
+                FindPathEvent findPathEvent = new FindPathEvent(geoEntity.Position, resourceGeo.Position);
+                _eventBus.Post(findPathEvent);
+                if(findPathEvent.CalculatedPath == null) continue;
+                
+                nearestResource = resourceEntity;
+                break;
+            }
             if (nearestResource == null)
             {
                 Debug.WriteLine(army + " Skip to IDLE");
                 armyAi.ArmyStateMachine.Fire(ArmyTrigger.FinishAction);
                 return;
             }
-           
+            
             GeoEntity resourcePosition = nearestResource.GetComponent<GeoEntity>();
             
             GoToEvent goToEvent = new GoToEvent(thinker, resourcePosition.Position);
