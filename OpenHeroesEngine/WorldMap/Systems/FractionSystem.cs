@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
@@ -13,6 +14,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
     public class FractionSystem : EventBasedSystem
     {
         private Grid _grid;
+        private HashSet<Fraction> _fractions = new HashSet<Fraction>();
 
         public override void LoadContent()
         {
@@ -23,21 +25,22 @@ namespace OpenHeroesEngine.WorldMap.Systems
         [Subscribe]
         public void RemoveResourceListener(RemoveResourceFromFractionEvent removeResourceFromFraction)
         {
-            if(removeResourceFromFraction.Fraction == null) return;
+            if (removeResourceFromFraction.Fraction == null) return;
             Fraction fraction = removeResourceFromFraction.Fraction;
             Resource resource = removeResourceFromFraction.Resource;
 
             if (!fraction.Resources.ContainsKey(resource.Definition.Name))
             {
-               //The faction has no resources of this type
-               return;
+                //The faction has no resources of this type
+                return;
             }
 
-            if (fraction.Resources[resource.Definition.Name].Amount >= resource.Amount) // The faction can afford to buy MAX
+            if (fraction.Resources[resource.Definition.Name].Amount >= resource.Amount
+            ) // The faction can afford to buy MAX
             {
                 removeResourceFromFraction.Success = true;
             }
-            else if(removeResourceFromFraction.Dividend > 0)//The factions can afford to buy parts
+            else if (removeResourceFromFraction.Dividend > 0) //The factions can afford to buy parts
             {
                 int parts = fraction.Resources[resource.Definition.Name].Amount % removeResourceFromFraction.Dividend;
                 int realCost = parts * removeResourceFromFraction.Dividend;
@@ -50,7 +53,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
         [Subscribe]
         public void AddResourceListener(AddResourceToFractionEvent addResourceToFractionEvent)
         {
-            if(addResourceToFractionEvent.Fraction == null) return;
+            if (addResourceToFractionEvent.Fraction == null) return;
             Fraction fraction = addResourceToFractionEvent.Fraction;
             Resource resource = addResourceToFractionEvent.Resource;
 
@@ -81,8 +84,8 @@ namespace OpenHeroesEngine.WorldMap.Systems
             Fraction oldFraction = structure.Fraction;
             GeoEntity geoEntity = addStructureToFractionEvent.Entity.GetComponent<GeoEntity>();
             long geoIndex = _grid.GetNodeIndex(geoEntity.Position);
-            
-            if(newFraction == oldFraction) return;
+
+            if (newFraction == oldFraction) return;
 
 
             oldFraction?.Structures.Remove(geoIndex);
@@ -90,6 +93,18 @@ namespace OpenHeroesEngine.WorldMap.Systems
             structure.Fraction = newFraction;
 
             Debug.WriteLine("Mines captured: " + newFraction?.Structures[geoIndex]);
+        }
+
+        [Subscribe]
+        public void AddArmyListener(AddArmyEvent addArmyEvent)
+        {
+            Fraction fraction = addArmyEvent.Army.Fraction;
+            if (!_fractions.Contains(fraction))
+            {
+                _fractions.Add(fraction);
+                NewFractionEvent newFractionEvent = new NewFractionEvent(fraction, addArmyEvent.Position);
+                _eventBus.Post(newFractionEvent);
+            }
         }
     }
 }

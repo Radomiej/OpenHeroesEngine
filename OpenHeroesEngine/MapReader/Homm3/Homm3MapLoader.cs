@@ -15,7 +15,7 @@ namespace OpenHeroesEngine.MapReader
     {
         private Homm3Map _map;
         private int pow2Size;
-        private byte[,] terrain;
+        public readonly byte[,] terrain;
 
         private ObstacleDefinition _anyObstacleDefinition = new ObstacleDefinition("TitleLock", new Point(1, 1));
         private ObstacleDefinition _waterObstacleDefinition = new ObstacleDefinition("Water", new Point(1, 1));
