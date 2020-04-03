@@ -12,7 +12,7 @@ namespace OpenHeroesEngine
 {
     public class GenericOpenHeroesRunner
     {
-        public static GenericOpenHeroesRunner CreateInstance(Homm3MapLoader mapLoader = null)
+        public static GenericOpenHeroesRunner CreateInstance(IMapLoader mapLoader = null)
         {
             return new GenericOpenHeroesRunner(mapLoader);
         }
@@ -24,8 +24,10 @@ namespace OpenHeroesEngine
         {
             _turn = new Turn();
             int? internalMapSize = mapLoader?.GetMapSize();
+            if (!internalMapSize.HasValue) internalMapSize = 512;
+            
             EntitySystem.BlackBoard.SetEntry("EventBus", JEventBus.GetDefault());
-            EntitySystem.BlackBoard.SetEntry("Grid", new Grid(512, 512));
+            EntitySystem.BlackBoard.SetEntry("Grid", new Grid(internalMapSize.Value, internalMapSize.Value));
             EntitySystem.BlackBoard.SetEntry("Turn", _turn);
             entityWorld = new EntityWorld(false, true, true) {PoolCleanupDelay = 1};
             mapLoader?.LoadMap(entityWorld);

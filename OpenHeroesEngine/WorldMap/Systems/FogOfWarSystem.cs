@@ -51,9 +51,15 @@ namespace OpenHeroesEngine.WorldMap.Systems
             {
                 for (int x = -sightRange; x < sightRange; x++)
                 {
+                   
                     Point offset = new Point(x, y);
                     if (EuclideanDistance(offset) > sightRange) continue;
                     Point visibleCell = position + offset;
+                    if (visibleCell.X < 0 || visibleCell.X >= _grid.Size || visibleCell.Y < 0 ||
+                        visibleCell.Y >= _grid.Size)
+                    {
+                        continue;
+                    }
                     fraction.FogOfWar[visibleCell.X, visibleCell.Y] = 2;
                 }
             }

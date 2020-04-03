@@ -14,7 +14,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
     public class FractionSystem : EventBasedSystem
     {
         private Grid _grid;
-        private HashSet<Fraction> _fractions;
+        private HashSet<Fraction> _fractions = new HashSet<Fraction>();
 
         public override void LoadContent()
         {
