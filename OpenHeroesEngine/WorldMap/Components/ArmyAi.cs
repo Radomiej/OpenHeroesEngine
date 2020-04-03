@@ -15,6 +15,7 @@ namespace OpenHeroesEngine.WorldMap.Components
         public Dictionary<ArmyState, IDecisionThinker> DecisionThinkers = new Dictionary<ArmyState, IDecisionThinker>();
         public IDecisionThinker DefaultDecisionThinker;
         public HashSet<long> VisitedStructures = new HashSet<long>(200);
+        public int SearchRadius = 10;
 
         public override void Initialize()
         {

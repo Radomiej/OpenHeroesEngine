@@ -19,7 +19,7 @@ namespace OpenHeroesEngine.WorldMap.AI.Decisions
             ArmyAi armyAi = thinker.GetComponent<ArmyAi>();
             Army army = thinker.GetComponent<Army>();
             
-            FindArmyInArea findStructureInArea = new FindArmyInArea(geoEntity.Position, 10);
+            FindArmyInArea findStructureInArea = new FindArmyInArea(geoEntity.Position, armyAi.SearchRadius * 3);
             JEventBus.GetDefault().Post(findStructureInArea);
             
             Entity nearestEnemyArmy = null;

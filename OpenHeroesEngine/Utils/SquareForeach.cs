@@ -1,6 +1,6 @@
 ﻿using OpenHeroesEngine.AStar;
 
-namespace OpenHeroesEngine
+namespace OpenHeroesEngine.Utils
 {
     public class SquareForeach
     {
@@ -16,7 +16,7 @@ namespace OpenHeroesEngine
 
             StartX = sizeX > 0 ? positionX : positionX + sizeX;
             EndX = sizeX > 0 ? positionX + sizeX : positionX;
-            
+
             int positionY = position.Y;
             int sizeY = size.Y;
 

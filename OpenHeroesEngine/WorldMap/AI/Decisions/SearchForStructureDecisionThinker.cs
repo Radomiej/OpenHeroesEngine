@@ -20,7 +20,7 @@ namespace OpenHeroesEngine.WorldMap.AI.Decisions
             ArmyAi armyAi = thinker.GetComponent<ArmyAi>();
             Army army = thinker.GetComponent<Army>();
 
-            FindStructureInArea findStructureInArea = new FindStructureInArea(geoEntity.Position, 10);
+            FindStructureInArea findStructureInArea = new FindStructureInArea(geoEntity.Position, armyAi.SearchRadius);
             JEventBus.GetDefault().Post(findStructureInArea);
 
             Entity nearestStructure = null;
@@ -47,6 +47,8 @@ namespace OpenHeroesEngine.WorldMap.AI.Decisions
                 return;
             }
 
+            armyAi.SearchRadius = 10;
+            
             GeoEntity resourcePosition = nearestStructure.GetComponent<GeoEntity>();
 
             GoToEvent goToEvent = new GoToEvent(thinker, resourcePosition.Position);

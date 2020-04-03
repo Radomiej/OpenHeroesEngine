@@ -24,6 +24,8 @@ namespace OpenHeroesEngine.WorldMap.Systems
             }
 
             GeoEntity geoEntity = entity.GetComponent<GeoEntity>();
+            Army army = entity.GetComponent<Army>();
+
             FindPathEvent findPathEvent = new FindPathEvent(geoEntity.Position, goToEvent.Goal);
             JEventBus.GetDefault().Post(findPathEvent);
             if (findPathEvent.CalculatedPath == null || findPathEvent.CalculatedPath.Count == 0)
@@ -37,8 +39,9 @@ namespace OpenHeroesEngine.WorldMap.Systems
             {
                 findPathEvent.CalculatedPath.Add(findPathEvent.CalculatedPath[0]);
             }
-            
-            for (int i = 0; i < 5; i++) //TODO Add Movement Cost Support
+
+            int i = 0;
+            while (army.MovementPoints > 0)
             {
                 if (i >= findPathEvent.CalculatedPath.Count - 1) break;
                 MoveToNextEvent moveToNextEvent = new MoveToNextEvent(findPathEvent.CalculatedPath, entity, i);
