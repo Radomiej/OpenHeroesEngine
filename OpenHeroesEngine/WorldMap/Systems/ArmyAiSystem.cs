@@ -30,34 +30,44 @@ namespace OpenHeroesEngine.WorldMap.Systems
             var armyAi = entity.GetComponent<ArmyAi>();
             var armyStateMachine = new StateMachine<ArmyState, ArmyTrigger>(ArmyState.Idle);
             armyAi.ArmyStateMachine = armyStateMachine;
-            
+
             armyStateMachine.Configure(ArmyState.Idle).Permit(ArmyTrigger.GoTo, ArmyState.TakePosition);
             armyStateMachine.Configure(ArmyState.Idle).Permit(ArmyTrigger.FindEnemy, ArmyState.SearchForEnemy);
 
-            armyStateMachine.Configure(ArmyState.SearchForEnemy).Permit(ArmyTrigger.FindStructure, ArmyState.SearchForStructure);
+            armyStateMachine.Configure(ArmyState.SearchForEnemy)
+                .Permit(ArmyTrigger.FindStructure, ArmyState.SearchForStructure);
             armyStateMachine.Configure(ArmyState.SearchForEnemy).Permit(ArmyTrigger.FinishAction, ArmyState.Idle);
-            
+
             armyStateMachine.Configure(ArmyState.SearchForResource).PermitReentry(ArmyTrigger.FindResources);
             armyStateMachine.Configure(ArmyState.SearchForResource).Permit(ArmyTrigger.FinishAction, ArmyState.Idle);
-           
-            armyStateMachine.Configure(ArmyState.SearchForStructure).Permit(ArmyTrigger.FindResources, ArmyState.SearchForResource);
+
+            armyStateMachine.Configure(ArmyState.SearchForStructure)
+                .Permit(ArmyTrigger.FindResources, ArmyState.SearchForResource);
             armyStateMachine.Configure(ArmyState.SearchForStructure).Permit(ArmyTrigger.FinishAction, ArmyState.Idle);
         }
 
-     
+
         public ArmyAiSystem() : base(Aspect.All(typeof(Army), typeof(GeoEntity), typeof(ArmyAi)))
         {
-          
         }
 
         public override void Process(Entity entity)
         {
             ArmyAi armyAi = entity.GetComponent<ArmyAi>();
-            
+            Army army = entity.GetComponent<Army>();
+
             IDecisionThinker decisionThinker = armyAi.DecisionThinkers[armyAi.ArmyStateMachine.State];
             _eventBus.Register(armyAi.DefaultDecisionThinker);
             armyAi.DefaultDecisionThinker.Think(entity, _eventBus);
-            decisionThinker.Think(entity, _eventBus);
+
+            float lastMovementPoints = 0; //protection against standing in place 
+            while (army.MovementPoints > 0 && army.MovementPoints != lastMovementPoints)
+            {
+                lastMovementPoints = army.MovementPoints;
+                decisionThinker.Think(entity, _eventBus);
+            }
+
+
             _eventBus.Unregister(armyAi.DefaultDecisionThinker);
             // Debug.WriteLine("Update AI");
         }

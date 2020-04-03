@@ -7,6 +7,7 @@ using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.Utils;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
@@ -51,23 +52,18 @@ namespace OpenHeroesEngine.WorldMap.Systems
             {
                 for (int x = -sightRange; x < sightRange; x++)
                 {
-                   
                     Point offset = new Point(x, y);
-                    if (EuclideanDistance(offset) > sightRange) continue;
+                    if (DistanceHelper.EuclideanDistance(offset) > sightRange) continue;
                     Point visibleCell = position + offset;
                     if (visibleCell.X < 0 || visibleCell.X >= _grid.Size || visibleCell.Y < 0 ||
                         visibleCell.Y >= _grid.Size)
                     {
                         continue;
                     }
+
                     fraction.FogOfWar[visibleCell.X, visibleCell.Y] = 2;
                 }
             }
-        }
-
-        private int EuclideanDistance(Point vector)
-        {
-            return (int) Math.Sqrt(Math.Pow(vector.X, 2) + Math.Pow(vector.Y, 2));
         }
 
         [Subscribe]
@@ -79,9 +75,8 @@ namespace OpenHeroesEngine.WorldMap.Systems
                 {
                     foreach (var fraction in _fractions)
                     {
-                        if(fraction.FogOfWar[x, y] > 1) fraction.FogOfWar[x, y] = 1;
+                        if (fraction.FogOfWar[x, y] > 1) fraction.FogOfWar[x, y] = 1;
                     }
-                   
                 }
             }
         }

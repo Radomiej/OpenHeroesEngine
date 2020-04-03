@@ -66,7 +66,7 @@ namespace TestOpenHeroesEngine.WorldLoader
             AzgaarMapLoader mapLoader = new AzgaarMapLoader(map);
             var runner = GenericOpenHeroesRunner.CreateInstance(mapLoader);
 
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 10; i++)
             {
                 runner.Draw();
                 runner.Update();

@@ -19,7 +19,7 @@ namespace OpenHeroesEngine.WorldMap.AI.Decisions
             ArmyAi armyAi = thinker.GetComponent<ArmyAi>();
             Army army = thinker.GetComponent<Army>();
             
-            FindResourceInArea findResourceInArea = new FindResourceInArea(geoEntity.Position, 10);
+            FindResourceInArea findResourceInArea = new FindResourceInArea(geoEntity.Position, armyAi.SearchRadius);
             JEventBus.GetDefault().Post(findResourceInArea);
 
             Entity nearestResource = null;
@@ -37,10 +37,13 @@ namespace OpenHeroesEngine.WorldMap.AI.Decisions
             }
             if (nearestResource == null)
             {
+                armyAi.SearchRadius += 5;
                 Debug.WriteLine(army + " Skip to IDLE");
                 armyAi.ArmyStateMachine.Fire(ArmyTrigger.FinishAction);
                 return;
             }
+            
+            armyAi.SearchRadius = 10;
             
             GeoEntity resourcePosition = nearestResource.GetComponent<GeoEntity>();
             
