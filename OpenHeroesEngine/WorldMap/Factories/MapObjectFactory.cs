@@ -20,7 +20,7 @@ namespace OpenHeroesEngine.WorldMap.Factories
 
         public static void AddArmy(string name, Point startPosition)
         {
-            CreatureDefinition creatureDefinition = new CreatureDefinition("Ork");
+            CreatureDefinition creatureDefinition = new CreatureDefinition("Peasant");
             Creature creature = new Creature(creatureDefinition, 10);
 
             Army army = new Army();

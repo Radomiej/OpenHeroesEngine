@@ -17,30 +17,37 @@ namespace OpenHeroesEngine
             return new GenericOpenHeroesRunner(mapLoader);
         }
 
-        protected EntityWorld entityWorld;
-        protected GameCalendar GameCalendar;
+        protected readonly JEventBus EventBus;
+        protected readonly EntityWorld EntityWorld;
+        protected readonly GameCalendar GameCalendar;
+        public bool GameEnded { get; private set; }
 
         public GenericOpenHeroesRunner(IMapLoader mapLoader = null)
         {
+            EventBus = JEventBus.GetDefault();
             GameCalendar = new GameCalendar();
             int? internalMapSize = mapLoader?.GetMapSize();
             if (!internalMapSize.HasValue) internalMapSize = 512;
             
-            EntitySystem.BlackBoard.SetEntry("EventBus", JEventBus.GetDefault());
+            EntitySystem.BlackBoard.SetEntry("EventBus", EventBus);
             EntitySystem.BlackBoard.SetEntry("Grid", new Grid(internalMapSize.Value, internalMapSize.Value));
             EntitySystem.BlackBoard.SetEntry("GameCalendar", GameCalendar);
-            entityWorld = new EntityWorld(false, true, true) {PoolCleanupDelay = 1};
-            mapLoader?.LoadMap(entityWorld);
-            JEventBus.GetDefault().Post(new CoreLoadedEvent());
+            EntityWorld = new EntityWorld(false, true, true) {PoolCleanupDelay = 1};
+            mapLoader?.LoadMap(EntityWorld);
+            EventBus.Post(new CoreLoadedEvent());
+            
+            EventBus.Register(this);
         }
 
         public void Draw()
         {
-            entityWorld.Draw();
+            EntityWorld.Draw();
         }
 
         public void Update()
         {
+            if(GameEnded) return;
+            
             CanNextTurnEvent canNextTurnEvent = new CanNextTurnEvent();
             JEventBus.GetDefault().Post(canNextTurnEvent);
 
@@ -51,9 +58,15 @@ namespace OpenHeroesEngine
             }
             TurnBeginEvent turnBeginEvent = new TurnBeginEvent(GameCalendar.CurrentTurn);
             JEventBus.GetDefault().Post(turnBeginEvent);
-            entityWorld.Update(1000);
+            EntityWorld.Update(1000);
             TurnEndEvent turnEndEvent = new TurnEndEvent(GameCalendar.CurrentTurn++);
             JEventBus.GetDefault().Post(turnEndEvent);
+        }
+
+        [Subscribe]
+        private void EndGameListener(EndGameEvent endGameEvent)
+        {
+            GameEnded = true;
         }
     }
 }
