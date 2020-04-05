@@ -14,7 +14,7 @@ using Stateless;
 
 namespace OpenHeroesEngine.WorldMap.Systems
 {
-    [ArtemisEntitySystem(GameLoopType = GameLoopType.Update)]
+    [ArtemisEntitySystem(GameLoopType = GameLoopType.Update, Layer = 1000)]
     public class ArmyAiSystem : EntityProcessingSystem
     {
         private JEventBus _eventBus;

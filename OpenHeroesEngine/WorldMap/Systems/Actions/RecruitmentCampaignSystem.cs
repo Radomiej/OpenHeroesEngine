@@ -37,12 +37,16 @@ namespace OpenHeroesEngine.WorldMap.Systems.Actions
         }
 
         [Subscribe]
-        public void AddHabitatsListener(AddStructureOnWorldMapEvent addStructureOnWorldMapEvent)
+        public void AddHabitatsListener(PlaceObjectOnMapEvent placeObjectOnMapEvent)
         {
-            if (!addStructureOnWorldMapEvent.Structure.Definition.Name.EndsWith("Habitat")) return;
+            Entity entity = placeObjectOnMapEvent.Entity;
+            if (!entity.HasComponent<Structure>()) return;
+            Structure structure = entity.GetComponent<Structure>();
+            if (!structure.Definition.Name.EndsWith("Habitat")) return;
 
-            long index = _grid.GetNodeIndex(addStructureOnWorldMapEvent.Position);
+            long index = _grid.GetNodeIndex(placeObjectOnMapEvent.Position);
             _habitats.Add(index);
+            _nodeToEntityLinker.Add(index, entity);
         }
 
         [Subscribe]
@@ -51,8 +55,10 @@ namespace OpenHeroesEngine.WorldMap.Systems.Actions
             long index = _grid.GetNodeIndex(moveInEvent.Current);
             if (!_habitats.Contains(index)) return;
 
+            Habitat habitat = _nodeToEntityLinker[index].GetComponent<Habitat>();
             Action action = new Action(_actionDefinition);
-            action.AddParam("population", 5);
+            action.AddParam("population", habitat.Current);
+            action.AddParam("habitat", habitat);
 
             DynamicActionEvent dynamicActionEvent =
                 new DynamicActionEvent(action, _actionAnswers, moveInEvent.MoveToNextEvent.Owner);
@@ -64,22 +70,24 @@ namespace OpenHeroesEngine.WorldMap.Systems.Actions
         private void AnswerToActionListener(ActionResponseEvent actionResponseEvent)
         {
             if (!actionResponseEvent.ActionEvent.Action.Definition.Name.Equals("RecruitmentAction")) return;
-            if(actionResponseEvent.SelectedAnswer.Name.Equals("Cancel")) return;
-            
+            if (actionResponseEvent.SelectedAnswer.Name.Equals("Cancel")) return;
+
+            Habitat habitat = actionResponseEvent.ActionEvent.Action.Params["habitat"] as Habitat;
+
             Entity owner = actionResponseEvent.ActionEvent.Target;
             Army army = owner.GetComponent<Army>();
             Fraction fraction = army.Fraction;
             int maxHire = (int) actionResponseEvent.ActionEvent.Action.Params["population"];
             int amount = maxHire * 17;
             Resource resource = new Resource(new ResourceDefinition("Gold"), amount);
+
             RemoveResourceFromFractionEvent removeResource = new RemoveResourceFromFractionEvent(resource, fraction);
             _eventBus.Post(removeResource);
+            if (!removeResource.Success && removeResource.CountOfDividend == 0) return;
 
-            if (removeResource.Success || removeResource.CountOfDividend > 0)
-            {
-                int hireAmount = removeResource.Success ? maxHire : removeResource.CountOfDividend;
-                army.Creatures[0].Count += hireAmount;
-            }
+            int hireAmount = removeResource.Success ? maxHire : removeResource.CountOfDividend;
+            army.Creatures[0].Count += hireAmount;
+            habitat.Current -= hireAmount;
         }
     }
 }

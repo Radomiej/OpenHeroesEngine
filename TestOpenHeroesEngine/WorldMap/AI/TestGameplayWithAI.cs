@@ -4,6 +4,7 @@ using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Factories;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 
@@ -15,8 +16,8 @@ namespace TestOpenHeroesEngine.Game.AI
         public void TestCreateRunnerAndInvokeGameLoop()
         {
             var runner = GenericOpenHeroesRunner.CreateInstance();
-            AddArmy("Red", new Point(1, 1));
-            AddArmy("Blue", new Point(128, 128));
+            MapObjectFactory.AddArmy("Red", new Point(1, 1));
+            MapObjectFactory.AddArmy("Blue", new Point(128, 128));
             AddBuildings();
             AddResources();
             AddObstacles();
@@ -50,10 +51,10 @@ namespace TestOpenHeroesEngine.Game.AI
         
         private void AddPeasantHabitats()
         {
-            Random random = new Random(93);
+            Random random = new Random(08);
 
             StructureDefinition structureDefinition = new StructureDefinition("PeasantHabitat", new Point(2, 1));
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 50; i++)
             {
                 Point position = new Point(random.Next(512), random.Next(512));
                 Structure structure = new Structure(structureDefinition);
@@ -133,19 +134,6 @@ namespace TestOpenHeroesEngine.Game.AI
                     new AddResourceOnWorldMapEvent(resource, position);
                 JEventBus.GetDefault().Post(addResourceOnWorldMapEvent);
             }
-        }
-
-        private void AddArmy(string name, Point startPosition)
-        {
-            CreatureDefinition creatureDefinition = new CreatureDefinition("Ork");
-            Creature creature = new Creature(creatureDefinition, 10);
-
-            Army army = new Army();
-            army.Fraction = new Fraction(name);
-            army.Creatures.Add(creature);
-
-            AddArmyEvent addArmyEvent = new AddArmyEvent(army, startPosition);
-            JEventBus.GetDefault().Post(addArmyEvent);
         }
     }
 }

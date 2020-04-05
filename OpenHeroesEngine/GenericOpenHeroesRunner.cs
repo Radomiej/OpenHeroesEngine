@@ -18,17 +18,17 @@ namespace OpenHeroesEngine
         }
 
         protected EntityWorld entityWorld;
-        protected Turn _turn;
+        protected GameCalendar GameCalendar;
 
         public GenericOpenHeroesRunner(IMapLoader mapLoader = null)
         {
-            _turn = new Turn();
+            GameCalendar = new GameCalendar();
             int? internalMapSize = mapLoader?.GetMapSize();
             if (!internalMapSize.HasValue) internalMapSize = 512;
             
             EntitySystem.BlackBoard.SetEntry("EventBus", JEventBus.GetDefault());
             EntitySystem.BlackBoard.SetEntry("Grid", new Grid(internalMapSize.Value, internalMapSize.Value));
-            EntitySystem.BlackBoard.SetEntry("Turn", _turn);
+            EntitySystem.BlackBoard.SetEntry("GameCalendar", GameCalendar);
             entityWorld = new EntityWorld(false, true, true) {PoolCleanupDelay = 1};
             mapLoader?.LoadMap(entityWorld);
             JEventBus.GetDefault().Post(new CoreLoadedEvent());
@@ -49,10 +49,10 @@ namespace OpenHeroesEngine
                 Debug.WriteLine("Are Actions To Finish");
                 return;
             }
-            TurnBeginEvent turnBeginEvent = new TurnBeginEvent(_turn.CurrentTurn);
+            TurnBeginEvent turnBeginEvent = new TurnBeginEvent(GameCalendar.CurrentTurn);
             JEventBus.GetDefault().Post(turnBeginEvent);
             entityWorld.Update(1000);
-            TurnEndEvent turnEndEvent = new TurnEndEvent(_turn.CurrentTurn++);
+            TurnEndEvent turnEndEvent = new TurnEndEvent(GameCalendar.CurrentTurn++);
             JEventBus.GetDefault().Post(turnEndEvent);
         }
     }

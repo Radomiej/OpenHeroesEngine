@@ -25,6 +25,7 @@ namespace OpenHeroesEngine.WorldMap.Factories
 
             Army army = new Army();
             army.Fraction = new Fraction(name);
+            army.Fraction.Resources.Add("Gold", new Resource(new ResourceDefinition("Gold"), 500));
             army.Creatures.Add(creature);
 
             AddArmyEvent addArmyEvent = new AddArmyEvent(army, startPosition);

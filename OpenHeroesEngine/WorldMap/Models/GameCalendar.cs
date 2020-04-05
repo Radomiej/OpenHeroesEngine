@@ -1,6 +1,6 @@
 ﻿namespace OpenHeroesEngine.WorldMap.Models
 {
-    public class Turn
+    public class GameCalendar
     {
         public int CurrentTurn = 1;
     }

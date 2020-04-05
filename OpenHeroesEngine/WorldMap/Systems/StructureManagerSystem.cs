@@ -41,9 +41,18 @@ namespace OpenHeroesEngine.WorldMap.Systems
             Point position = addStructureOnWorldMapEvent.Position;
             
             if (addStructureOnWorldMapEvent.Structure.Definition.Name.EndsWith("Mine")) return CreateMine(structure, position);
+            if (addStructureOnWorldMapEvent.Structure.Definition.Name.EndsWith("Habitat")) return CreateHabitat(structure, position);
+
             return entityWorld.CreateEntityFromTemplate("Structure",
                 addStructureOnWorldMapEvent.Structure,
                 addStructureOnWorldMapEvent.Position);
+        }
+
+        private Entity CreateHabitat(Structure structure, Point position)
+        {
+             return entityWorld.CreateEntityFromTemplate("Habitat",
+                           structure,
+                           position, new CreatureDefinition("Peasant"), 7);
         }
 
         private Entity CreateMine(Structure structure, Point position)
