@@ -28,10 +28,13 @@ namespace OpenHeroesEngine
             GameCalendar = new GameCalendar();
             int? internalMapSize = mapLoader?.GetMapSize();
             if (!internalMapSize.HasValue) internalMapSize = 512;
+            Grid grid = new Grid(internalMapSize.Value, internalMapSize.Value);
             
             EntitySystem.BlackBoard.SetEntry("EventBus", EventBus);
-            EntitySystem.BlackBoard.SetEntry("Grid", new Grid(internalMapSize.Value, internalMapSize.Value));
+            EntitySystem.BlackBoard.SetEntry("Grid", grid);
             EntitySystem.BlackBoard.SetEntry("GameCalendar", GameCalendar);
+            EntitySystem.BlackBoard.SetEntry("TerrainLayer", new TerrainLayer(grid));
+            
             EntityWorld = new EntityWorld(false, true, true) {PoolCleanupDelay = 1};
             mapLoader?.LoadMap(EntityWorld);
             EventBus.Post(new CoreLoadedEvent());
