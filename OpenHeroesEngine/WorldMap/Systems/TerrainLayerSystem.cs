@@ -26,6 +26,19 @@ namespace OpenHeroesEngine.WorldMap.Systems
         }
 
         [Subscribe]
+        public void WorldLoadedListener(WorldLoadedEvent worldLoadedEvent)
+        {
+            byte[,] mapTerrain = worldLoadedEvent.TerrainLayer;
+            for (int x = 0; x < mapTerrain.GetLength(0); x += 1)
+            {
+                for (int y = 0; y < mapTerrain.GetLength(1); y += 1)
+                {
+                    _terrainLayer.Terrain[x, y] = worldLoadedEvent.TerrainLayer[x, y];
+                }
+            }
+        }
+        
+        [Subscribe]
         public void SetToWaterListener(SetToWaterEvent setToWaterEvent)
         {
             var position = setToWaterEvent.CellPosition;

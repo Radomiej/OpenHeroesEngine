@@ -6,11 +6,11 @@ namespace OpenHeroesEngine.WorldMap.Events
 {
     public class WorldLoadedEvent
     {
-        public readonly Grid Grid;
+        public readonly byte[,] TerrainLayer;
 
-        public WorldLoadedEvent(Grid grid)
+        public WorldLoadedEvent(byte[,] terrainLayer)
         {
-            this.Grid = grid;
+            TerrainLayer = terrainLayer;
         }
     }
 }

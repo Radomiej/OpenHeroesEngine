@@ -12,12 +12,12 @@ namespace OpenHeroesEngine.WorldMap.Systems
     {
         private Grid _grid;
 
-        [Subscribe]
-        public void WorldLoadedListener(CoreLoadedEvent coreLoadedEvent)
+        public override void LoadContent()
         {
+            base.LoadContent();
             _grid = BlackBoard.GetEntry<Grid>("Grid");
-            JEventBus.GetDefault().Post(new WorldLoadedEvent(_grid));
         }
+
         
         [Subscribe]
         public void GeoIndexListener(GeoIndexReceiverEvent geoIndexReceiverEvent)

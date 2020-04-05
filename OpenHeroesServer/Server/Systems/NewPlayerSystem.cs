@@ -4,6 +4,7 @@ using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.WorldMap.Models;
 using OpenHeroesServer.Server.Events;
 using OpenHeroesServer.WebSocket;
+using Radomiej.JavityBus;
 
 namespace OpenHeroesServer.Server.Systems
 {
@@ -17,6 +18,7 @@ namespace OpenHeroesServer.Server.Systems
             _terrainLayer = BlackBoard.GetEntry<TerrainLayer>("TerrainLayer");
         }
 
+        [Subscribe]
         public void CreatePlayerListener(CreatePlayerEvent createPlayerEvent)
         {
             var player = PlayerManager.Instance.FindPlayer(createPlayerEvent.hid);

@@ -52,6 +52,12 @@ namespace OpenHeroesEngine.MapReader
             LoadObjects();
             CreateArmies();
             PrintMatrix(terrain);
+            SendWorldLoadedEvent( EntitySystem.BlackBoard.GetEntry<JEventBus>("EventBus"));
+        }
+
+        private void SendWorldLoadedEvent(JEventBus eventBus)
+        {
+            eventBus.Post(new WorldLoadedEvent(terrain));
         }
 
         private void CreateArmies()

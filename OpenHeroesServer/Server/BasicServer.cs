@@ -3,6 +3,7 @@ using System.IO;
 using Newtonsoft.Json;
 using OpenHeroesEngine;
 using OpenHeroesEngine.MapReader;
+using OpenHeroesServer.Server.Events;
 using OpenHeroesServer.WebSocket;
 using Radomiej.JavityBus;
 
@@ -22,6 +23,7 @@ namespace OpenHeroesServer.Server
 
         public void LoadSimple()
         {
+            JEventBus.GetDefault().Register(this);
             Homm3Map items = null;
             using (StreamReader r = new StreamReader("Resources/wings of war.h3m.json"))
             {
@@ -43,6 +45,7 @@ namespace OpenHeroesServer.Server
                 var clientEvent = QueueEvents.Instance.Take();
                 ProcessClientEvent(clientEvent);
             }
+            JEventBus.GetDefault().Unregister(this);
         }
 
         private void ProcessClientEvent(object clientEvent)
@@ -52,21 +55,28 @@ namespace OpenHeroesServer.Server
 
         private void StartWebServer()
         {
+            PrepareBindings();
             JavityWebSocketServer.GetInstance().Create();
             JavityWebSocketServer.GetInstance().AddWsService<PlayerWsService>("/Javity");
             JavityWebSocketServer.GetInstance().Start();
         }
 
+        private void PrepareBindings()
+        {
+            WsMessageBuilder.AddBinding(typeof(EndTurnEvent));
+            Console.WriteLine(WsMessageBuilder.CreateWsText("public", new EndTurnEvent()));
+        }
+
         private void GenerateMap(Homm3Map map)
         {
             Homm3MapLoader mapLoader = new Homm3MapLoader(map);
-            var runner = GenericOpenHeroesRunner.CreateInstance(mapLoader);
+            _runner = GenericOpenHeroesRunner.CreateInstance(mapLoader);
+        }
 
-            for (int i = 0; i < 1000; i++)
-            {
-                runner.Draw();
-                runner.Update();
-            }
+        [Subscribe]
+        public void EndTurnEvent(EndTurnEvent endTurnEvent)
+        {
+            _runner.Update();
         }
     }
 }

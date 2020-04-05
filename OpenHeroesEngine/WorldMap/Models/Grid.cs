@@ -49,5 +49,11 @@ namespace OpenHeroesEngine.WorldMap.Models
                 return new Point(x, y);
             }
         }
+
+        public bool InBounds(Point pointToTranslate)
+        {
+            return pointToTranslate.X >= 0 && pointToTranslate.Y >= 0 && pointToTranslate.X < Width &&
+                   pointToTranslate.Y < Height;
+        }
     }
 }
