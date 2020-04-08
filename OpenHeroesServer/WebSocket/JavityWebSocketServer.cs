@@ -50,7 +50,7 @@ namespace OpenHeroesServer.WebSocket
             if (wsMessageEvent.persistenceType == NetworkPersistenceType.None) return;
             _persistentMessages.Add(wsMessageEvent);
         }
-
+        
         public List<WsMessage> GetPersistentMessages()
         {
             return _persistentMessages;

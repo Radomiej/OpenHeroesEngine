@@ -46,6 +46,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
                 if (i >= findPathEvent.CalculatedPath.Count - 1) break;
                 MoveToNextEvent moveToNextEvent = new MoveToNextEvent(findPathEvent.CalculatedPath, entity, i);
                 JEventBus.GetDefault().Post(moveToNextEvent);
+                i++;
             }
 
             Debug.WriteLine("GoTo OK: " + geoEntity.Position);

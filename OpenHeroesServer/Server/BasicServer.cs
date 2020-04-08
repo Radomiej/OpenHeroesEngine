@@ -24,6 +24,8 @@ namespace OpenHeroesServer.Server
         public void LoadSimple()
         {
             JEventBus.GetDefault().Register(this);
+            JEventBus.GetDefault().Register(JavityWebSocketServer.GetInstance());
+            
             Homm3Map items = null;
             using (StreamReader r = new StreamReader("Resources/wings of war.h3m.json"))
             {
@@ -63,8 +65,8 @@ namespace OpenHeroesServer.Server
 
         private void PrepareBindings()
         {
-            WsMessageBuilder.AddBinding(typeof(EndTurnEvent));
-            Console.WriteLine(WsMessageBuilder.CreateWsText("public", new EndTurnEvent()));
+            WsMessageBuilder.AddBinding(typeof(CompleteTurnEvent));
+            Console.WriteLine(WsMessageBuilder.CreateWsText("public", new CompleteTurnEvent()));
         }
 
         private void GenerateMap(Homm3Map map)
@@ -74,7 +76,7 @@ namespace OpenHeroesServer.Server
         }
 
         [Subscribe]
-        public void EndTurnEvent(EndTurnEvent endTurnEvent)
+        public void EndTurnEvent(CompleteTurnEvent completeTurnEvent)
         {
             _runner.Update();
         }

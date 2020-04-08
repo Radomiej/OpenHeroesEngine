@@ -1,6 +1,6 @@
 ﻿namespace OpenHeroesServer.Server.Events
 {
-    public class EndTurnEvent
+    public class CompleteTurnEvent
     {
         
     }

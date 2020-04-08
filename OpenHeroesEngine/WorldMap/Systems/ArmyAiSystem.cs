@@ -56,7 +56,6 @@ namespace OpenHeroesEngine.WorldMap.Systems
             ArmyAi armyAi = entity.GetComponent<ArmyAi>();
             Army army = entity.GetComponent<Army>();
 
-            IDecisionThinker decisionThinker = armyAi.DecisionThinkers[armyAi.ArmyStateMachine.State];
             _eventBus.Register(armyAi.DefaultDecisionThinker);
             armyAi.DefaultDecisionThinker.Think(entity, _eventBus);
 
@@ -64,6 +63,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
             while (army.MovementPoints > 0 && army.MovementPoints != lastMovementPoints)
             {
                 lastMovementPoints = army.MovementPoints;
+                IDecisionThinker decisionThinker = armyAi.DecisionThinkers[armyAi.ArmyStateMachine.State];
                 decisionThinker.Think(entity, _eventBus);
             }
 

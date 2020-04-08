@@ -2,11 +2,13 @@
 using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
+using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
 using OpenHeroesServer.Server.Events;
 using OpenHeroesServer.WebSocket;
+using OpenHeroesServer.WebSocket.Models;
 using Radomiej.JavityBus;
 
 namespace OpenHeroesServer.Server.Systems
@@ -46,11 +48,26 @@ namespace OpenHeroesServer.Server.Systems
         {
             RedirectLike(turnEndEvent, turnEndEvent);
         }
+        
+        [Subscribe]
+        public void TurnEndListener(PlaceObjectOnMapEvent placeObjectOnMapEvent)
+        {
+            var wrappedEvent = new
+            {
+                Position = placeObjectOnMapEvent.Position,
+                Size = placeObjectOnMapEvent.Size,
+                Structure = placeObjectOnMapEvent.Entity.GetComponent<Structure>(),
+                Obstacle = placeObjectOnMapEvent.Entity.GetComponent<Obstacle>(),
+                Resource = placeObjectOnMapEvent.Entity.GetComponent<Resource>()
+            };
+            RedirectLike(placeObjectOnMapEvent, wrappedEvent, default, NetworkPersistenceType.Permanent);
+        }
 
-        private void RedirectLike(object realEvent, object wrappedEvent, string channel = "public")
+        private void RedirectLike(object realEvent, object wrappedEvent, string channel = "public", NetworkPersistenceType persistenceType = NetworkPersistenceType.None)
         {
             var message = WsMessageBuilder.CreateWsMessage(channel, wrappedEvent);
             message.type = realEvent.GetType().FullName;
+            message.persistenceType = NetworkPersistenceType.Permanent;
             _eventBus.Post(message);
         }
     }
