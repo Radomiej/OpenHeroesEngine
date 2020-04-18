@@ -3,6 +3,7 @@ using System.IO;
 using Newtonsoft.Json;
 using OpenHeroesEngine;
 using OpenHeroesEngine.MapReader;
+using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesServer.Server.Events;
 using OpenHeroesServer.WebSocket;
 using Radomiej.JavityBus;
@@ -66,7 +67,8 @@ namespace OpenHeroesServer.Server
         private void PrepareBindings()
         {
             WsMessageBuilder.AddBinding(typeof(CompleteTurnEvent));
-            Console.WriteLine(WsMessageBuilder.CreateWsText("public", new CompleteTurnEvent()));
+            WsMessageBuilder.AddBinding("FindPathEvent",typeof(FindPathRequestEvent));
+           
         }
 
         private void GenerateMap(Homm3Map map)

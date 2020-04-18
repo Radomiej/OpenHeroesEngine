@@ -8,15 +8,15 @@ namespace OpenHeroesServer.WebSocket
 {
     public class JavityWebSocketServer
     {
-        private static JavityWebSocketServer instance;
+        private static JavityWebSocketServer _instance;
         public static JavityWebSocketServer GetInstance()
         {
-            if(instance == null) instance = new JavityWebSocketServer();
-            return instance;
+            if(_instance == null) _instance = new JavityWebSocketServer();
+            return _instance;
         }
 
         private WebSocketServer _webSocketServer;
-        private List<WsMessage> _persistentMessages = new List<WsMessage>(1000);
+        private readonly List<WsMessage> _persistentMessages = new List<WsMessage>(1000);
         
         public void AddWsService<T> (string path) where T : WebSocketBehavior, new()
         {

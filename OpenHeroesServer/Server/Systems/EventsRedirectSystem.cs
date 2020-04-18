@@ -63,6 +63,22 @@ namespace OpenHeroesServer.Server.Systems
             RedirectLike(placeObjectOnMapEvent, wrappedEvent, default, NetworkPersistenceType.Permanent);
         }
 
+        [Subscribe]
+        public void AddArmyListener(AddArmyEvent addArmyEvent)
+        {
+            RedirectLike(addArmyEvent, addArmyEvent);
+        }
+        
+        [Subscribe]
+        public void FindPathRequestListener(FindPathRequestEvent findPathRequestEvent)
+        {
+            FindPathEvent realEvent = new FindPathEvent(findPathRequestEvent.Start, findPathRequestEvent.End);
+            _eventBus.Post(realEvent);
+            findPathRequestEvent.CalculatedPath = realEvent.CalculatedPath;
+            RedirectLike(findPathRequestEvent, findPathRequestEvent);
+        }
+
+        
         private void RedirectLike(object realEvent, object wrappedEvent, string channel = "public", NetworkPersistenceType persistenceType = NetworkPersistenceType.None)
         {
             var message = WsMessageBuilder.CreateWsMessage(channel, wrappedEvent);

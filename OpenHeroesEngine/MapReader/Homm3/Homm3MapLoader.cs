@@ -184,6 +184,7 @@ namespace OpenHeroesEngine.MapReader
 
         private void SetWater(Point position)
         {
+            JEventBus.GetDefault().Post(new SetToWaterEvent(position));
             // AddSingleCellObstacle(position, _waterObstacleDefinition);
         }
 

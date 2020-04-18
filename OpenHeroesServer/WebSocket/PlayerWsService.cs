@@ -35,6 +35,7 @@ namespace OpenHeroesServer.WebSocket
             JEventBus.GetDefault().Register(this);
             _player = PlayerManager.Instance.CreatePlayer();
             _player.Connected = true;
+            _player.PlayerWsService = this;
 
             var yourPlayerEvent = new YourPlayerEvent(_player);
             Send(WsMessageBuilder.CreateWsText("private", yourPlayerEvent));
@@ -44,10 +45,6 @@ namespace OpenHeroesServer.WebSocket
             var createPlayerEvent = new CreatePlayerEvent(_player);
             Send(WsMessageBuilder.CreateWsText("player", createPlayerEvent));
             QueueEvents.Instance.Add(createPlayerEvent); //TODO add logic
-            // Observable.NextFrame().ObserveOnMainThread().Subscribe(unit =>
-            // {
-            //     JEventBus.GetDefault().Post(createPlayerEvent);
-            // });
           
         }
 

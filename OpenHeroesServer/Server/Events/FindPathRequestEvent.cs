@@ -3,17 +3,17 @@ using OpenHeroesEngine.AStar;
 
 namespace OpenHeroesEngine.WorldMap.Events
 {
-    public class FindPathEvent
+    public class FindPathRequestEvent
     {
         public string Id;
-        public readonly Point Start, End;
+        public Point Start, End;
         public List<Point> CalculatedPath;
 
-        public FindPathEvent()
+        public FindPathRequestEvent()
         {
             
         }
-        public FindPathEvent(Point start, Point end)
+        public FindPathRequestEvent(Point start, Point end)
         {
             this.End = end;
             this.Start = start;
