@@ -46,7 +46,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
         }
         
         [Subscribe]
-        public void SetToWaterListener(SetToGroundEvent setToGroundEvent)
+        public void SetToGroundListener(SetToGroundEvent setToGroundEvent)
         {
             var position = setToGroundEvent.CellPosition;
             _terrainLayer.Terrain[position.X, position.Y] = 1;

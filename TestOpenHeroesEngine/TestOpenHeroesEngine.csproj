@@ -26,13 +26,7 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
       <None Remove="Resources\Azgaar\Boy Mely_heightmap.jpeg" />
-      <EmbeddedResource Include="Resources\Azgaar\Boy Mely_heightmap.jpeg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </EmbeddedResource>
       <None Remove="Resources\Azgaar\Boy Mely_routes.jpeg" />
-      <EmbeddedResource Include="Resources\Azgaar\Boy Mely_routes.jpeg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </EmbeddedResource>
     </ItemGroup>
 
 </Project>

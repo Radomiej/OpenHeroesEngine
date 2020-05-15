@@ -9,7 +9,7 @@ namespace OpenHeroesServer
         {
             Console.WriteLine("Server Initialize!");
             var basicServer = BasicServer.CreateInstance();
-            basicServer.LoadSimple();
+            basicServer.Run();
             Console.ReadKey();
         }
     }

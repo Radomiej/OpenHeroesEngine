@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using Newtonsoft.Json;
 using OpenHeroesEngine;
 using OpenHeroesEngine.MapReader;
+using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesServer.Server.Events;
 using OpenHeroesServer.WebSocket;
@@ -12,21 +14,41 @@ namespace OpenHeroesServer.Server
 {
     public class BasicServer
     {
-        public static BasicServer CreateInstance()
+        private int _port;
+        private JEventBus _eventBus;
+
+        public static BasicServer CreateInstance(int port = 4649)
         {
-            return new BasicServer();
+            return new BasicServer(port);
         }
 
         private GenericOpenHeroesRunner _runner;
-        public BasicServer()
+
+        public BasicServer(int port, JEventBus eventBus = null)
         {
+            _eventBus ??= JEventBus.GetDefault();
+            _port = port;
         }
 
-        public void LoadSimple()
+        public void RunAsynch(IMapLoader mapLoader = null)
         {
-            JEventBus.GetDefault().Register(this);
-            JEventBus.GetDefault().Register(JavityWebSocketServer.GetInstance());
-            
+            Thread thread1 = new Thread(() => Run(mapLoader));
+            thread1.Start();
+        }
+
+        public void Run(IMapLoader mapLoader = null)
+        {
+            _eventBus.Register(this);
+            _eventBus.Register(JavityWebSocketServer.GetInstance());
+
+            mapLoader ??= LoadClassicMap();
+            GenerateMap(mapLoader);
+            StartWebServer();
+            RunGame();
+        }
+
+        private IMapLoader LoadClassicMap()
+        {
             Homm3Map items = null;
             using (StreamReader r = new StreamReader("Resources/wings of war.h3m.json"))
             {
@@ -35,10 +57,8 @@ namespace OpenHeroesServer.Server
             }
 
             if (items == null) throw new NotSupportedException("Cannot load map! aborted.");
-            
-            GenerateMap(items);
-            StartWebServer();
-            RunGame();
+
+            return new Homm3MapLoader(items);
         }
 
         private void RunGame()
@@ -48,18 +68,19 @@ namespace OpenHeroesServer.Server
                 var clientEvent = QueueEvents.Instance.Take();
                 ProcessClientEvent(clientEvent);
             }
-            JEventBus.GetDefault().Unregister(this);
+
+            _eventBus.Unregister(this);
         }
 
         private void ProcessClientEvent(object clientEvent)
         {
-            JEventBus.GetDefault().Post(clientEvent);
+            _eventBus.Post(clientEvent);
         }
 
         private void StartWebServer()
         {
             PrepareBindings();
-            JavityWebSocketServer.GetInstance().Create();
+            JavityWebSocketServer.GetInstance().Create(_port);
             JavityWebSocketServer.GetInstance().AddWsService<PlayerWsService>("/Javity");
             JavityWebSocketServer.GetInstance().Start();
         }
@@ -67,13 +88,11 @@ namespace OpenHeroesServer.Server
         private void PrepareBindings()
         {
             WsMessageBuilder.AddBinding(typeof(CompleteTurnEvent));
-            WsMessageBuilder.AddBinding("FindPathEvent",typeof(FindPathRequestEvent));
-           
+            WsMessageBuilder.AddBinding("FindPathEvent", typeof(FindPathRequestEvent));
         }
 
-        private void GenerateMap(Homm3Map map)
+        private void GenerateMap(IMapLoader mapLoader)
         {
-            Homm3MapLoader mapLoader = new Homm3MapLoader(map);
             _runner = GenericOpenHeroesRunner.CreateInstance(mapLoader);
         }
 
