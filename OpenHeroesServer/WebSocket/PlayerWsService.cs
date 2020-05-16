@@ -36,16 +36,9 @@ namespace OpenHeroesServer.WebSocket
             _player = PlayerManager.Instance.CreatePlayer();
             _player.Connected = true;
             _player.PlayerWsService = this;
-
-            var yourPlayerEvent = new YourPlayerEvent(_player);
-            Send(WsMessageBuilder.CreateWsText("private", yourPlayerEvent));
             
-          
-            
-            var createPlayerEvent = new CreatePlayerEvent(_player);
-            Send(WsMessageBuilder.CreateWsText("player", createPlayerEvent));
-            QueueEvents.Instance.Add(createPlayerEvent); //TODO add logic
-          
+            var yourConnectionId = new YourConnectionIdEvent(_player);
+            Send(WsMessageBuilder.CreateWsText("private", yourConnectionId));
         }
 
         private void SendPersistentMessages()

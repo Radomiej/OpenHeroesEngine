@@ -31,18 +31,18 @@ namespace OpenHeroesServer.Server
         public JPlayer CreatePlayer()
         {
             JPlayer player = new JPlayer();
-            player.Id = Guid.NewGuid().ToString();
+            player.ConnectionId = Guid.NewGuid().ToString();
             RegisterPlayer(player);
             return player;
         }
 
-        public JPlayer FindPlayer(string hid)
+        public JPlayer FindPlayerByConnectionId(string connectionId)
         {
             JPlayer result = null;
 
             foreach (var player in Players)
             {
-                if (player.Id.Equals(hid))
+                if (player.ConnectionId.Equals(connectionId))
                 {
                     return player;
                 }

@@ -8,7 +8,7 @@ namespace OpenHeroesServer.Server.Events
 
         public YourPlayerEvent(JPlayer player)
         {
-            this.hid = player.Id;
+            this.hid = player.ConnectionId;
         }
     }
 }

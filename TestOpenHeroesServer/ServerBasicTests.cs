@@ -9,6 +9,7 @@ namespace TestOpenHeroesServer
 {
     public class Tests
     {
+        private int freePort;
         [SetUp]
         public void Setup()
         {
@@ -22,15 +23,18 @@ namespace TestOpenHeroesServer
                 {1, 1, 1, 1, 1, 1, 1, 1},
                 {1, 1, 1, 1, 3, 1, 1, 1}
             };
-            int freePort = GetFreePortHelper.NextFreePort();
+            freePort = GetFreePortHelper.NextFreePort();
             var basicServer = BasicServer.CreateInstance(freePort);
             basicServer.RunAsynch(new ByteArrayMapLoader(map));
+            Thread.Sleep(2000);
         }
 
         [Test]
-        public void Test1()
+        public void SimpleConnectionToServerTest()
         {
-            Assert.Pass();
+            var client = new OHSWebSocketClient("localhost", freePort);
+            client.Connect();
+            client.PlayerLogin("TestName", "TestToken");
         }
     }
 }
