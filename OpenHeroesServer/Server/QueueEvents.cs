@@ -10,7 +10,7 @@ namespace OpenHeroesServer.Server
 
         private readonly BlockingCollection<object> _queue;
 
-        private QueueEvents()
+        public QueueEvents()
         {
             _queue = new BlockingCollection<object>();
         }

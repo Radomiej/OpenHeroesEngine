@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Newtonsoft.Json;
+using OpenHeroesEngine.Utils;
 using OpenHeroesServer.Server;
 using OpenHeroesServer.Server.Events;
 using OpenHeroesServer.Server.Models;
@@ -22,9 +23,7 @@ namespace OpenHeroesServer.WebSocket
 
         protected override void OnMessage (MessageEventArgs e)
         {
-//            Debug.Log("Message: " + String.Format ("{0}", e.Data));
-            WsMessage receivedMessage = JsonConvert.DeserializeObject<WsMessage>(e.Data);
-            object incomingRealObject = WsMessageBuilder.ReadWsMessage(receivedMessage);
+            object incomingRealObject = JsonDeserializer.DeserializeMessage(e);
             QueueEvents.Instance.Add(incomingRealObject);
         }
 
@@ -54,6 +53,11 @@ namespace OpenHeroesServer.WebSocket
         {
             string message = JsonConvert.SerializeObject(wsMessageEvent);
             Send(message);
+        }
+
+        public void SendPrivate(object privateEventToSend)
+        {
+            Send(WsMessageBuilder.CreateWsText("private", privateEventToSend));
         }
     }
 }

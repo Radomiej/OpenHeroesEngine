@@ -15,7 +15,7 @@ namespace OpenHeroesServer.Server.Events
 
         public CreatePlayerEvent(JPlayer player)
         {
-            hid = player.ConnectionId;
+            hid = player.Id;
             name = player.Name;
         }
 

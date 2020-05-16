@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using OpenHeroesServer.Server.Models;
 
 namespace OpenHeroesServer.Server.Events
@@ -6,8 +7,11 @@ namespace OpenHeroesServer.Server.Events
     [Serializable]
     public class LoginPlayerEvent
     {
-        public string connectionId;
-        public string name;
+        public string PlayerId;
+        [NotNull]
+        public string ConnectionId;
+        [NotNull]
+        public string Name;
 
         public LoginPlayerEvent()
         {
@@ -15,14 +19,15 @@ namespace OpenHeroesServer.Server.Events
 
         public LoginPlayerEvent(JPlayer player)
         {
-            connectionId = player.ConnectionId;
-            name = player.Name;
+            PlayerId = player.Id;
+            ConnectionId = player.ConnectionId;
+            Name = player.Name;
         }
 
-        public LoginPlayerEvent(string name, string connectionId)
+        public LoginPlayerEvent(string name, string playerId)
         {
-            this.connectionId = connectionId;
-            this.name = name;
+            this.PlayerId = playerId;
+            this.Name = name;
         }
     }
 }

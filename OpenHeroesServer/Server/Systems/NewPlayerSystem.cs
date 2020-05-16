@@ -1,4 +1,5 @@
-﻿using Artemis.Attributes;
+﻿using System;
+using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.WorldMap.Events;
@@ -14,39 +15,49 @@ namespace OpenHeroesServer.Server.Systems
     public class NewPlayerSystem : EventBasedSystem
     {
         private TerrainLayer _terrainLayer;
+
         public override void LoadContent()
         {
             base.LoadContent();
             _terrainLayer = BlackBoard.GetEntry<TerrainLayer>("TerrainLayer");
         }
 
-        
+
         [Subscribe]
         public void LoginPlayerListener(LoginPlayerEvent loginPlayerEvent)
         {
-            var player = PlayerManager.Instance.FindPlayerByConnectionId(loginPlayerEvent.connectionId);
-            if (player != null) ResumePlayer(player, loginPlayerEvent);
-            
+            var connectionPlayer = PlayerManager.Instance.FindPlayerByConnectionId(loginPlayerEvent.ConnectionId);
+            var player = PlayerManager.Instance.FindPlayerById(loginPlayerEvent.PlayerId);
+            if(player == null) player = CreatePlayer(loginPlayerEvent, connectionPlayer);
+            else // Merge to old player
+            {
+                PlayerManager.Instance.RemovePlayer(connectionPlayer);
+                player.PlayerWsService = connectionPlayer.PlayerWsService;
+                player.ConnectionId = connectionPlayer.ConnectionId;
+            }
+
             var yourPlayerEvent = new YourPlayerEvent(player);
-            // Send(WsMessageBuilder.CreateWsText("private", yourPlayerEvent));
-            
-          
+            player.PlayerWsService.SendPrivate(yourPlayerEvent);
+
+
             var createPlayerEvent = new CreatePlayerEvent(player);
-            // Send(WsMessageBuilder.CreateWsText("player", createPlayerEvent));
-            QueueEvents.Instance.Add(createPlayerEvent); //TODO add logic
-            
+            QueueEvents.Instance.Add(createPlayerEvent);
         }
 
-        private void ResumePlayer(JPlayer player, LoginPlayerEvent loginPlayerEvent)
+        private JPlayer CreatePlayer(LoginPlayerEvent loginPlayerEvent, JPlayer connectionPlayer)
         {
-            throw new System.NotImplementedException();
+            connectionPlayer.Id = Guid.NewGuid().ToString();
+            connectionPlayer.Name = loginPlayerEvent.Name;
+            return connectionPlayer;
         }
+
+       
 
         [Subscribe]
         public void CreatePlayerListener(CreatePlayerEvent createPlayerEvent)
         {
             var player = PlayerManager.Instance.FindPlayerByConnectionId(createPlayerEvent.hid);
-            var message = WsMessageBuilder.CreateWsMessage("public", _terrainLayer); 
+            var message = WsMessageBuilder.CreateWsMessage("public", _terrainLayer);
             _eventBus.Post(message);
         }
     }

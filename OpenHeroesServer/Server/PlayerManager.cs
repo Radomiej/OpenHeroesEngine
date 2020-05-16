@@ -47,7 +47,33 @@ namespace OpenHeroesServer.Server
                     return player;
                 }
             }
+
             return null;
+        }
+
+        public JPlayer FindPlayerById(string playerId)
+        {
+            if (playerId == null) return null;
+
+            foreach (var player in Players)
+            {
+                if (player.Id != null && player.Id.Equals(playerId))
+                {
+                    return player;
+                }
+            }
+
+            return null;
+        }
+
+        public bool RemovePlayerByConnectionId(string connectionId)
+        {
+            return RemovePlayer(FindPlayerByConnectionId(connectionId));
+        }
+
+        public bool RemovePlayer(JPlayer connectionPlayer)
+        {
+            return Players.Remove(connectionPlayer);
         }
     }
 }

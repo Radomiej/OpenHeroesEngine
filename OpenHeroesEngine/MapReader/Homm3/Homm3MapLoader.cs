@@ -125,12 +125,12 @@ namespace OpenHeroesEngine.MapReader
                 int sizeY = 1;
                 int indexZ = 0;
 
-                CreateWorldObject(mapObject, position);
+                if(!CreateWorldObject(mapObject, position)) continue;
                 for (int y = 6; y > 0; y--)
                 {
                     for (int x = 8; x > 0; x--)
                     {
-                        Point cellPosition = new Point(position.X - (x - 1), position.Y - (y - 1));
+                        Point cellPosition = new Point(position.X - (x - 1), position.Y + (y - 1));
 
                         if (cellPosition.X < 0 || cellPosition.X >= _map.size || cellPosition.Y < 0 ||
                             cellPosition.Y >= _map.size)
@@ -164,9 +164,8 @@ namespace OpenHeroesEngine.MapReader
             }
         }
 
-        private void CreateWorldObject(Object mapObject, Point position)
+        private bool CreateWorldObject(Object mapObject, Point position)
         {
-            
             if(mapObject.def.spriteName.StartsWith("AVTchst0.def")) MapObjectFactory.AddResourcePiles(position, "Chest");
             else if(mapObject.obj.Equals("TREASURE_CHEST")) MapObjectFactory.AddResourcePiles(position, "Chest");
             else if(mapObject.def.spriteName.Equals("adcfra.def")) MapObjectFactory.AddResourcePiles(position, "Chest");
@@ -177,9 +176,10 @@ namespace OpenHeroesEngine.MapReader
             else if(mapObject.obj.Equals("CREATURE_GENERATOR1")) MapObjectFactory.AddStructure(position, "PeasantHabitat");
             else if(mapObject.def.spriteName.StartsWith("AVG")) MapObjectFactory.AddStructure(position, "PeasantHabitat");
             else if(mapObject.obj.Equals("ARTIFACT")) MapObjectFactory.AddResourcePiles(position, "Gold");
-            else return;
+            else return false;
             
             terrain[position.X, position.Y] = 4;
+            return true;
         }
 
         private void SetWater(Point position)

@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using OpenHeroesEngine.Utils;
 using OpenHeroesServer.Server;
 using OpenHeroesServer.Server.Events;
 using OpenHeroesServer.Server.Models;
@@ -13,8 +14,15 @@ namespace TestOpenHeroesServer.Internal
     {
         private readonly string _host;
         private readonly int _serverPort;
+        private bool _connected;
+        private bool _signup;
         private WebSocket _webSocket;
-        private JPlayer _playerInfo;
+        private volatile JPlayer _playerInfo;
+        private QueueEvents _queueEvents;
+        public QueueEvents Events => _queueEvents;
+
+        private CountdownLatch connectWatcher = new CountdownLatch(1);
+        private CountdownLatch signupWatcher = new CountdownLatch(1);
 
         public OHSWebSocketClient(string host, int serverPort)
         {
@@ -24,6 +32,7 @@ namespace TestOpenHeroesServer.Internal
 
         public void Connect()
         {
+            _queueEvents = new QueueEvents();
             _webSocket = new WebSocket($"ws://{_host}:{_serverPort}/Javity");
             _webSocket.OnMessage += OnMessage;
             _webSocket.OnClose += OnClose;
@@ -38,9 +47,8 @@ namespace TestOpenHeroesServer.Internal
         private void OnMessage(object? sender, MessageEventArgs e)
         {
             Debug.WriteLine("Message: " + String.Format("{0}", e.Data));
-            WsMessage receivedMessage = JsonConvert.DeserializeObject<WsMessage>(e.Data);
-            object incomingRealObject = WsMessageBuilder.ReadWsMessage(receivedMessage);
-            if(!ProcessInternal(incomingRealObject)) QueueEvents.Instance.Add(incomingRealObject);
+            object incomingRealObject = JsonDeserializer.DeserializeMessage(e);
+            if(!ProcessInternal(incomingRealObject)) Events.Add(incomingRealObject);
         }
 
         private bool ProcessInternal(object incomingRealObject)
@@ -49,15 +57,42 @@ namespace TestOpenHeroesServer.Internal
             {
                 _playerInfo = new JPlayer();
                 _playerInfo.ConnectionId = yourConnectionId.ConnectionId;
+                _connected = true;
+                connectWatcher.Signal();
+            }
+            else if (incomingRealObject is YourPlayerEvent yourPlayerEvent)
+            {
+                _playerInfo.Id = yourPlayerEvent.PlayerId;
+                _playerInfo.Name = yourPlayerEvent.PlayerName;
+                _signup = true;
+                Debug.WriteLine("Zwalniam SIGNUP");
+                signupWatcher.Signal();
             }
             else return false;
 
             return true;
         }
 
-        public void PlayerLogin(string name, string token)
+        public void WaitForConnectionId()
         {
-            SendMessage(new LoginPlayerEvent(name, token));
+            connectWatcher.Wait();
+        }
+        public void PlayerLogin(string name, string playerId)
+        {
+            if (_signup)
+            {
+                throw new NotSupportedException("ReLogin is not supported");
+            }
+            if (!_connected && !connectWatcher.TryWait(2000) && !_connected)
+            {
+                throw new NotSupportedException("Client should be connected to server");
+            }
+            
+            var loginEvent = new LoginPlayerEvent(name, playerId);
+            loginEvent.ConnectionId = _playerInfo.ConnectionId;
+            SendMessage(loginEvent);
+            // Debug.WriteLine("Czekam na SIGNUP");
+            // signupWatcher.Wait();
         }
 
         public void SendMessage(object createPlayerEvent, string channel = "public")

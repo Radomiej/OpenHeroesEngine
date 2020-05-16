@@ -50,7 +50,7 @@ namespace OpenHeroesServer.Server.Systems
         }
         
         [Subscribe]
-        public void TurnEndListener(PlaceObjectOnMapEvent placeObjectOnMapEvent)
+        public void PlaceObjectOnMapListener(PlaceObjectOnMapEvent placeObjectOnMapEvent)
         {
             var wrappedEvent = new
             {

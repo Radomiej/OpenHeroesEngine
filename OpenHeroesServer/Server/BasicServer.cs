@@ -6,6 +6,7 @@ using OpenHeroesEngine;
 using OpenHeroesEngine.MapReader;
 using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Models;
 using OpenHeroesServer.Server.Events;
 using OpenHeroesServer.WebSocket;
 using Radomiej.JavityBus;
@@ -89,6 +90,11 @@ namespace OpenHeroesServer.Server
         {
             WsMessageBuilder.AddBinding(typeof(CompleteTurnEvent));
             WsMessageBuilder.AddBinding("FindPathEvent", typeof(FindPathRequestEvent));
+            WsMessageBuilder.AddBinding("LoginPlayerEvent", typeof(LoginPlayerEvent));
+            WsMessageBuilder.AddBinding(typeof(LoginPlayerEvent));
+            WsMessageBuilder.AddBinding("AddArmyEvent", typeof(AddArmyEvent));
+            WsMessageBuilder.AddBinding(typeof(AddArmyEvent));
+            WsMessageBuilder.AddBinding(typeof(TerrainLayer));
         }
 
         private void GenerateMap(IMapLoader mapLoader)

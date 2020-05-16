@@ -11,6 +11,7 @@ namespace OpenHeroesServer.WebSocket
     {
         private static Dictionary<string, Type> _typeBindings = new Dictionary<string, Type>()
         {
+            {typeof(YourConnectionIdEvent).FullName, typeof(YourConnectionIdEvent)},
             {typeof(YourPlayerEvent).FullName, typeof(YourPlayerEvent)}
         };
 

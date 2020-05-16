@@ -4,11 +4,19 @@ namespace OpenHeroesServer.Server.Events
 {
     public class YourPlayerEvent
     {
-        public string hid;
+        public string ConnectionId;
+        public string PlayerId;
+        public string PlayerName;
+
+        public YourPlayerEvent()
+        {
+        }
 
         public YourPlayerEvent(JPlayer player)
         {
-            this.hid = player.ConnectionId;
+            ConnectionId = player.ConnectionId;
+            PlayerId = player.Id;
+            PlayerName = player.Name;
         }
     }
 }
