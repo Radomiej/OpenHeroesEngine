@@ -28,7 +28,7 @@ namespace TestOpenHeroesServer
                 {1, 1, 1, 1, 1, 1, 1, 1},
                 {1, 1, 1, 1, 3, 1, 1, 1}
             };
-            freePort = GetFreePortHelper.NextFreePort();
+            freePort = GetFreePortHelper.NextFreePort(4649);
             var basicServer = BasicServer.CreateInstance(freePort);
             basicServer.RunAsynch(new ByteArrayMapLoader(map));
             Thread.Sleep(2000);
