@@ -1,7 +1,11 @@
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using OpenHeroesEngine.Utils;
+using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesServer.Server;
 using OpenHeroesServer.Server.Events;
 using OpenHeroesServer.Server.Models;
@@ -21,8 +25,12 @@ namespace TestOpenHeroesServer.Internal
         private QueueEvents _queueEvents;
         public QueueEvents Events => _queueEvents;
 
+        public JPlayer PlayerInfo => _playerInfo;
+
         private CountdownLatch connectWatcher = new CountdownLatch(1);
         private CountdownLatch signupWatcher = new CountdownLatch(1);
+        
+        private ArrayList _typeWaiters = ArrayList.Synchronized(new ArrayList());
 
         public OHSWebSocketClient(string host, int serverPort)
         {
@@ -56,28 +64,46 @@ namespace TestOpenHeroesServer.Internal
             if (incomingRealObject is YourConnectionIdEvent yourConnectionId)
             {
                 _playerInfo = new JPlayer();
-                _playerInfo.ConnectionId = yourConnectionId.ConnectionId;
+                PlayerInfo.ConnectionId = yourConnectionId.ConnectionId;
                 _connected = true;
                 connectWatcher.Signal();
             }
             else if (incomingRealObject is YourPlayerEvent yourPlayerEvent)
             {
-                _playerInfo.Id = yourPlayerEvent.PlayerId;
-                _playerInfo.Name = yourPlayerEvent.PlayerName;
+                PlayerInfo.Id = yourPlayerEvent.PlayerId;
+                PlayerInfo.Name = yourPlayerEvent.PlayerName;
                 _signup = true;
                 Debug.WriteLine("Zwalniam SIGNUP");
                 signupWatcher.Signal();
             }
-            else return false;
-
+            else
+            {
+                ProcessWaiters(incomingRealObject);
+                return false;
+            }
+          
             return true;
+        }
+
+        private void ProcessWaiters(object incomingRealObject)
+        {
+            foreach (var obj in _typeWaiters.ToArray())
+            {
+                TypeWaiter waiter = obj as TypeWaiter;
+                if(waiter == null) throw new NotSupportedException("waiter must be TypeWaiter");
+                
+                if(waiter.Type1 != incomingRealObject.GetType()) continue;
+                waiter.Value = incomingRealObject;
+                waiter.Signal();
+                _typeWaiters.Remove(obj);
+            }
         }
 
         public void WaitForConnectionId()
         {
             connectWatcher.Wait();
         }
-        public void PlayerLogin(string name, string playerId)
+        public void PlayerLogin(string name, string playerId = "")
         {
             if (_signup)
             {
@@ -89,7 +115,7 @@ namespace TestOpenHeroesServer.Internal
             }
             
             var loginEvent = new LoginPlayerEvent(name, playerId);
-            loginEvent.ConnectionId = _playerInfo.ConnectionId;
+            loginEvent.ConnectionId = PlayerInfo.ConnectionId;
             SendMessage(loginEvent);
             // Debug.WriteLine("Czekam na SIGNUP");
             // signupWatcher.Wait();
@@ -99,6 +125,35 @@ namespace TestOpenHeroesServer.Internal
         {
             string message = WsMessageBuilder.CreateWsText(channel, createPlayerEvent);
             _webSocket.Send(message);
+        }
+        
+        public void Disconnect()
+        {
+            _webSocket.Close(CloseStatusCode.Normal);
+        }
+
+        public T WaitForEvent<T>()
+        {
+            var countdownLatch = AddWaiter<T>(out var typeWaiter);
+            countdownLatch.Wait();
+            return typeWaiter.Value is T ? (T) typeWaiter.Value : default;
+        }
+
+        private CountdownLatch AddWaiter<T>(out TypeWaiter typeWaiter)
+        {
+            Type typeParameterType = typeof(T);
+            CountdownLatch countdownLatch = new CountdownLatch(1);
+            typeWaiter = new TypeWaiter(typeParameterType, countdownLatch);
+            _typeWaiters.Add(typeWaiter);
+            return countdownLatch;
+        }
+
+        public T SendAndWaitForEvent<T>(object eventToSend)
+        {
+            var countdownLatch = AddWaiter<T>(out var typeWaiter);
+            SendMessage(eventToSend);
+            countdownLatch.Wait();
+            return typeWaiter.Value is T ? (T) typeWaiter.Value : default;
         }
     }
 }

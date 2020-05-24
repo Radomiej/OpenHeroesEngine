@@ -83,7 +83,7 @@ namespace OpenHeroesServer.Server.Systems
         {
             var message = WsMessageBuilder.CreateWsMessage(channel, wrappedEvent);
             message.type = realEvent.GetType().FullName;
-            message.persistenceType = NetworkPersistenceType.Permanent;
+            message.persistenceType = persistenceType;
             _eventBus.Post(message);
         }
     }

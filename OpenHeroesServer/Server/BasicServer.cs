@@ -89,11 +89,17 @@ namespace OpenHeroesServer.Server
         private void PrepareBindings()
         {
             WsMessageBuilder.AddBinding(typeof(CompleteTurnEvent));
+            
+            
             WsMessageBuilder.AddBinding("FindPathEvent", typeof(FindPathRequestEvent));
+            WsMessageBuilder.AddBinding(typeof(FindPathRequestEvent));
+            
             WsMessageBuilder.AddBinding("LoginPlayerEvent", typeof(LoginPlayerEvent));
             WsMessageBuilder.AddBinding(typeof(LoginPlayerEvent));
+            
             WsMessageBuilder.AddBinding("AddArmyEvent", typeof(AddArmyEvent));
             WsMessageBuilder.AddBinding(typeof(AddArmyEvent));
+            
             WsMessageBuilder.AddBinding(typeof(TerrainLayer));
         }
 

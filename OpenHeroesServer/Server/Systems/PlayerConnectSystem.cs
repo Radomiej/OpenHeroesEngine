@@ -12,7 +12,7 @@ using Radomiej.JavityBus;
 namespace OpenHeroesServer.Server.Systems
 {
     [ArtemisEntitySystem(GameLoopType = GameLoopType.Update)]
-    public class NewPlayerSystem : EventBasedSystem
+    public class PlayerConnectSystem : EventBasedSystem
     {
         private TerrainLayer _terrainLayer;
 

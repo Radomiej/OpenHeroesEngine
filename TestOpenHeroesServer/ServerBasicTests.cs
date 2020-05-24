@@ -12,7 +12,7 @@ using TestOpenHeroesServer.Internal;
 
 namespace TestOpenHeroesServer
 {
-    public class Tests
+    public class ServerBasicTests
     {
         private int freePort;
         [SetUp]
@@ -40,8 +40,8 @@ namespace TestOpenHeroesServer
             var client = new OHSWebSocketClient("localhost", freePort);
             client.Connect();
             client.WaitForConnectionId();
-            client.PlayerLogin("TestName", "TestToken");
-            
+            client.PlayerLogin("TestName");
+            string playerId = client.PlayerInfo.Id;
 
             HashSet<Type> waitingForTypes = new HashSet<Type>();
             waitingForTypes.Add(typeof(AddArmyEvent));
@@ -55,9 +55,14 @@ namespace TestOpenHeroesServer
                     waitingForTypes.Remove(testEvent.GetType());
                 }
             }
-            if(waitingForTypes.Count == 0) Assert.Pass();
-            else Assert.Fail("Not All Events Are Valid");
+            if(waitingForTypes.Count > 0) Assert.Fail("Not All Events Are Valid");
+
+            client.Disconnect();
             
+            client = new OHSWebSocketClient("localhost", freePort);
+            client.Connect();
+            client.WaitForConnectionId();
+            client.PlayerLogin("TestName", playerId);
         }
     }
 }

@@ -111,7 +111,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
         [Subscribe]
         public void SetToGroundListener(SetToGroundEvent setToGround)
         {
-            _pathFinder.ChangeCostOfMove(setToGround.CellPosition.X, setToGround.CellPosition.Y, 0);
+            _pathFinder.ChangeCostOfMove(setToGround.CellPosition.X, setToGround.CellPosition.Y, 1);
         }
 
         [Subscribe]
