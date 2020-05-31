@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.MapReader;
+using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Events;
 using Radomiej.JavityBus;
 
@@ -12,6 +14,7 @@ namespace TestOpenHeroesEngine.Game.Pathfinder
         [SetUp]
         public void Setup()
         {
+            JEventBus.GetDefault().ClearAll();
             _runner = GenericOpenHeroesRunner.CreateInstance();
         }
 

@@ -30,7 +30,7 @@ namespace OpenHeroesEngine.MapReader.SimpleArray
                 for (int y = 0; y < _map.GetLength(1); y++)
                 {
                     var position = new Point(x, y);
-                    var tile = _map[x, y];
+                    var tile = _map[y, x];
                     if (tile == 0) //Water
                     {
                         SetWater(position);

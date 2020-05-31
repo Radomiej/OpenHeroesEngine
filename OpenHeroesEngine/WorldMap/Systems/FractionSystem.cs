@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;

@@ -4,6 +4,7 @@ using Artemis;
 using Artemis.Blackboard;
 using Artemis.System;
 using OpenHeroesEngine.MapReader;
+using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
@@ -14,16 +15,19 @@ namespace OpenHeroesEngine
     {
         public static GenericOpenHeroesRunner CreateInstance(IMapLoader mapLoader = null, EntityWorld entityWorld = null)
         {
+            if(mapLoader == null) mapLoader = new ByteArrayMapLoader(ByteArrayHelper.CreateBase());
             return new GenericOpenHeroesRunner(mapLoader, entityWorld);
         }
 
         protected readonly JEventBus EventBus;
         protected readonly EntityWorld EntityWorld;
         protected readonly GameCalendar GameCalendar;
+        private readonly IMapLoader _mapLoader;
         public bool GameEnded { get; private set; }
 
-        public GenericOpenHeroesRunner(IMapLoader mapLoader = null, EntityWorld entityWorld = null)
+        public GenericOpenHeroesRunner(IMapLoader mapLoader, EntityWorld entityWorld = null)
         {
+            _mapLoader = mapLoader;
             EventBus = JEventBus.GetDefault();
             GameCalendar = new GameCalendar();
             int? internalMapSize = mapLoader?.GetMapSize();
@@ -38,18 +42,21 @@ namespace OpenHeroesEngine
             if (entityWorld == null)
             {
                 EntityWorld = new EntityWorld(false, true, true) {PoolCleanupDelay = 1};
+                LoadMap();
             }
             else
             {
                 EntityWorld = entityWorld;
             }
-
-            mapLoader?.LoadMap(EntityWorld);
-            EventBus.Post(new CoreLoadedEvent());
-            
-            EventBus.Register(this);
         }
 
+        public void LoadMap()
+        {
+            _mapLoader.LoadMap(EntityWorld);
+            EventBus.Post(new CoreLoadedEvent());
+            EventBus.Register(this);
+        }
+        
         public void Draw()
         {
             EntityWorld.Draw();

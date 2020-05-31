@@ -18,7 +18,7 @@ namespace OpenHeroesEngine.Artemis
 
         public override void LoadContent()
         {
-            _eventBus = BlackBoard.GetEntry<JEventBus>("EventBus");
+            _eventBus = BlackBoard.GetEntry<JEventBus>("EventBus") ?? JEventBus.GetDefault();
             _eventBus.Register(this);
         }
         
