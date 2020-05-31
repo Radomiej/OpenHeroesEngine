@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using OpenHeroesEngine.AStar;
+﻿using OpenHeroesEngine.AStar;
 
 namespace OpenHeroesEngine.WorldMap.Events
 {

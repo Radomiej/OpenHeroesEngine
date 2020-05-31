@@ -11,7 +11,7 @@ namespace OpenHeroesEngine.WorldMap.Factories
     {
         private static void SendEvent(JEventBus eventBus, object eventToSend)
         {
-            eventBus ??= JEventBus.GetDefault();
+            if(eventBus == null) eventBus = JEventBus.GetDefault();
             eventBus.Post(eventToSend);
         }
 

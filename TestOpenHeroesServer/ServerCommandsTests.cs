@@ -48,8 +48,6 @@ namespace TestOpenHeroesServer
         {
             FindPathRequestEvent findPathRequestEvent = new FindPathRequestEvent(new Point(1, 1), new Point(5, 5));
             FindPathRequestEvent response =_client.SendAndWaitForEvent<FindPathRequestEvent>(findPathRequestEvent);
-            // _client.SendMessage(findPathRequestEvent);
-            // FindPathEvent response =_client.WaitForEvent<FindPathEvent>();
             Assert.IsNotNull(response.CalculatedPath);
             Assert.IsNotEmpty(response.CalculatedPath);
         }

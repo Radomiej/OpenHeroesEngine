@@ -12,9 +12,9 @@ namespace OpenHeroesEngine
 {
     public class GenericOpenHeroesRunner
     {
-        public static GenericOpenHeroesRunner CreateInstance(IMapLoader mapLoader = null)
+        public static GenericOpenHeroesRunner CreateInstance(IMapLoader mapLoader = null, EntityWorld entityWorld = null)
         {
-            return new GenericOpenHeroesRunner(mapLoader);
+            return new GenericOpenHeroesRunner(mapLoader, entityWorld);
         }
 
         protected readonly JEventBus EventBus;
@@ -22,7 +22,7 @@ namespace OpenHeroesEngine
         protected readonly GameCalendar GameCalendar;
         public bool GameEnded { get; private set; }
 
-        public GenericOpenHeroesRunner(IMapLoader mapLoader = null)
+        public GenericOpenHeroesRunner(IMapLoader mapLoader = null, EntityWorld entityWorld = null)
         {
             EventBus = JEventBus.GetDefault();
             GameCalendar = new GameCalendar();
@@ -34,8 +34,16 @@ namespace OpenHeroesEngine
             EntitySystem.BlackBoard.SetEntry("Grid", grid);
             EntitySystem.BlackBoard.SetEntry("GameCalendar", GameCalendar);
             EntitySystem.BlackBoard.SetEntry("TerrainLayer", new TerrainLayer(grid));
-            
-            EntityWorld = new EntityWorld(false, true, true) {PoolCleanupDelay = 1};
+
+            if (entityWorld == null)
+            {
+                EntityWorld = new EntityWorld(false, true, true) {PoolCleanupDelay = 1};
+            }
+            else
+            {
+                EntityWorld = entityWorld;
+            }
+
             mapLoader?.LoadMap(EntityWorld);
             EventBus.Post(new CoreLoadedEvent());
             

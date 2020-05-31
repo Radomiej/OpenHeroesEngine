@@ -7,6 +7,7 @@ using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
+using static OpenHeroesEngine.Logger.Logger;
 
 namespace OpenHeroesEngine.WorldMap.Systems
 {
@@ -71,8 +72,8 @@ namespace OpenHeroesEngine.WorldMap.Systems
 
             string changedValue = resource.Amount >= 0 ? "+" : "-";
             changedValue += resource.Amount;
-            Debug.WriteLine($"Resource of {fraction.Name} changed: " + fraction.Resources[resource.Definition.Name] +
-                            $"({changedValue})");
+            Debug($"Resource of {fraction.Name} changed: " + fraction.Resources[resource.Definition.Name] +
+                    $"({changedValue})");
         }
 
         [Subscribe]
@@ -91,7 +92,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
             newFraction?.Structures.Add(geoIndex, structure);
             structure.Fraction = newFraction;
 
-            Debug.WriteLine("Mines captured: " + newFraction?.Structures[geoIndex]);
+            Debug("Mines captured: " + newFraction?.Structures[geoIndex]);
         }
 
         [Subscribe]

@@ -19,7 +19,7 @@ namespace OpenHeroesEngine.WorldMap.Systems.Actions
     {
         private Grid _grid;
         private Dictionary<long, Entity> _nodeToEntityLinker = new Dictionary<long, Entity>(500);
-        private HashSet<long> _habitats = new HashSet<long>(200);
+        private HashSet<long> _habitats = new HashSet<long>();
         private ActionDefinition _actionDefinition;
         private List<ActionAnswer> _actionAnswers;
         private Random _random = new Random(123);

@@ -1,12 +1,8 @@
-﻿using System;
-using Artemis.Attributes;
+﻿using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
-using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
-using OpenHeroesEngine.WorldMap.Models;
-using OpenHeroesServer.Server.Events;
 using OpenHeroesServer.WebSocket;
 using OpenHeroesServer.WebSocket.Models;
 using Radomiej.JavityBus;

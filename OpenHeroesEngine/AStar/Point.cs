@@ -34,8 +34,12 @@ namespace OpenHeroesEngine.AStar
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(X, Y);
+            unchecked
+            {
+                return (X * 397) ^ Y;
+            }
         }
+        
 
         public static float Distance(Point left, Point right)
         {

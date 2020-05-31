@@ -36,6 +36,8 @@ namespace OpenHeroesEngine.WorldMap.Systems
                     _terrainLayer.Terrain[x, y] = worldLoadedEvent.TerrainLayer[x, y];
                 }
             }
+            
+            _eventBus.Post(new TerrainLayerReadyEvent(_terrainLayer));
         }
         
         [Subscribe]
