@@ -1,10 +1,8 @@
 using NUnit.Framework;
 using OpenHeroesEngine;
-using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.MapReader.SimpleArray;
-using OpenHeroesEngine.WorldMap.Models;
 
-namespace TestOpenHeroesEngine.Game.Models
+namespace TestOpenHeroesEngine.WorldMap.Runners
 {
     public class TestMovementSystem
     {

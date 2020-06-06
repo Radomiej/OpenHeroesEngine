@@ -2,8 +2,9 @@ using NUnit.Framework;
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Models;
+using Radomiej.JavityBus;
 
-namespace TestOpenHeroesEngine.Game.Models
+namespace TestOpenHeroesEngine.WorldMap.Models
 {
     public class TestGrid
     {
@@ -11,6 +12,7 @@ namespace TestOpenHeroesEngine.Game.Models
         [SetUp]
         public void Setup()
         {
+            JEventBus.GetDefault().ClearAll();
             _runner = GenericOpenHeroesRunner.CreateInstance();
         }
 

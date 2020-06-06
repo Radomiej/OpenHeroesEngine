@@ -8,10 +8,16 @@ using OpenHeroesEngine.WorldMap.Factories;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 
-namespace TestOpenHeroesEngine.Game.AI
+namespace TestOpenHeroesEngine.WorldMap.AI
 {
     public class TestGameplayWithAi
     {
+        [SetUp]
+        public void Setup()
+        {
+            JEventBus.GetDefault().ClearAll();
+        }
+        
         [Test]
         public void TestCreateRunnerAndInvokeGameLoop()
         {

@@ -1,15 +1,13 @@
 ﻿using NUnit.Framework;
-using NUnit.Framework.Internal.Commands;
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
-using OpenHeroesEngine.MapReader;
+using OpenHeroesEngine.GameSystems.Events;
 using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.Utils;
-using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 
-namespace TestOpenHeroesEngine.Game.Pathfinder
+namespace TestOpenHeroesEngine.WorldMap.GameSystems
 {
     public class TestTerritorySystem
     {

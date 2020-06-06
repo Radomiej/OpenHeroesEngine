@@ -1,12 +1,10 @@
 ﻿using NUnit.Framework;
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
-using OpenHeroesEngine.MapReader;
-using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Events;
 using Radomiej.JavityBus;
 
-namespace TestOpenHeroesEngine.Game.Pathfinder
+namespace TestOpenHeroesEngine.WorldMap.Pathfinder
 {
     public class TestAStarPathFinder
     {
