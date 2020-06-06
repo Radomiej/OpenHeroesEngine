@@ -7,10 +7,12 @@ namespace OpenHeroesEngine.GameSystems.Components
     public class Urban : ComponentPoolable
     {
         public int Population;
+        public float BirdsRate;
         
         public override void Initialize()
         {
             Population = 0;
+            BirdsRate = 0;
         }
     }
 }

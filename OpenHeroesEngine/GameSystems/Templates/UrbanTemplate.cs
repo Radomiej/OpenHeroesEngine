@@ -14,11 +14,13 @@ namespace OpenHeroesEngine.GameSystems.Templates
             {
                 Point position = args[0] as Point;
                 int population = (int) args[1];
+                float birdsRate = (float) args[2];
                 GeoEntity geoEntity = entityWorld.GetComponentFromPool<GeoEntity>();
                 geoEntity.Position = position;
                 
                 Urban urban = entityWorld.GetComponentFromPool<Urban>();
                 urban.Population = population;
+                urban.BirdsRate = birdsRate;
                 
                 e.AddComponent(geoEntity);
                 e.AddComponent(urban);

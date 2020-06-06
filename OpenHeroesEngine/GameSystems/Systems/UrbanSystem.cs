@@ -1,5 +1,9 @@
-﻿using Artemis;
+﻿using System.Collections.Generic;
+using Artemis;
+using Artemis.Attributes;
+using Artemis.Manager;
 using Artemis.System;
+using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.Dijkstra;
 using OpenHeroesEngine.GameSystems.Components;
 using OpenHeroesEngine.GameSystems.Events;
@@ -10,19 +14,17 @@ using Radomiej.JavityBus;
 
 namespace OpenHeroesEngine.GameSystems.Systems
 {
+    [ArtemisEntitySystem(GameLoopType = GameLoopType.Update)]
     public class UrbanSystem : EntityComponentProcessingSystem<Urban, GeoEntity>
     {
-        private DijkstraPathFinder _dijkstraPathFinder;
         private JEventBus _eventBus;
+        private Dictionary<Point, Entity> _urbans = new Dictionary<Point, Entity>();
 
         public override void LoadContent()
         {
             base.LoadContent();
             _eventBus = BlackBoard.GetEntry<JEventBus>("EventBus") ?? JEventBus.GetDefault();
             _eventBus.Register(this);
-
-            var _grid = BlackBoard.GetEntry<Grid>("Grid");
-            _dijkstraPathFinder = new DijkstraPathFinder(ByteArrayHelper.CreateBase(_grid.Width));
         }
 
         public override void UnloadContent()
@@ -31,16 +33,24 @@ namespace OpenHeroesEngine.GameSystems.Systems
         }
 
         [Subscribe]
-        public void CreateUrbanListener(CreateInfluenceCenterEvent createInfluenceCenter)
+        public void CreateUrbanListener(CreateUrbanEvent createUrbanEvent)
         {
-            Entity resource = entityWorld.CreateEntityFromTemplate("Influence",
-                createInfluenceCenter.Center, createInfluenceCenter.PropagationValue);
+            Entity resource = entityWorld.CreateEntityFromTemplate("Urban",
+                createUrbanEvent.Position, createUrbanEvent.Population, createUrbanEvent.BirdsRate);
+            _urbans[createUrbanEvent.Position] = resource;
+        }
+
+        [Subscribe]
+        public void FindUrbanInformationListener(FindUrbanInformationEvent findUrbanInformationEvent)
+        {
+            Entity urban = _urbans[findUrbanInformationEvent.Position];
+            findUrbanInformationEvent.Urban = urban.GetComponent<Urban>();
+            findUrbanInformationEvent.Success = true;
         }
 
         public override void Process(Entity entity, Urban urban, GeoEntity geoEntity)
         {
-            
+            urban.Population += (int) (urban.Population * urban.BirdsRate + 1);
         }
     }
-
 }
