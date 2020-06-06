@@ -1,10 +1,10 @@
 ﻿using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
-using OpenHeroesEngine.WorldMap.Events.World;
+using OpenHeroesEngine.GameSystems.Events;
 using Radomiej.JavityBus;
 
-namespace OpenHeroesEngine.WorldMap.Systems.World
+namespace OpenHeroesEngine.GameSystems.Systems
 {
     [ArtemisEntitySystem(GameLoopType = GameLoopType.Update)]
     public class NeighboredSystem : EventBasedSystem

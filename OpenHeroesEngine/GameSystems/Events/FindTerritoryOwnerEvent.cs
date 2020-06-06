@@ -1,7 +1,7 @@
 ﻿using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Models;
 
-namespace OpenHeroesEngine.WorldMap.Events.World
+namespace OpenHeroesEngine.GameSystems.Events
 {
     public class FindTerritoryOwnerEvent
     {

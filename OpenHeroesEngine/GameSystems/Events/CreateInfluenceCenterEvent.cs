@@ -1,6 +1,6 @@
 ﻿using OpenHeroesEngine.AStar;
 
-namespace OpenHeroesEngine.WorldMap.Events.World
+namespace OpenHeroesEngine.GameSystems.Events
 {
     public class CreateInfluenceCenterEvent
     {

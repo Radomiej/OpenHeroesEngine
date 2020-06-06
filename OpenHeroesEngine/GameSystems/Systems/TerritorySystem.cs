@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using Artemis;
+﻿using System.Collections.Generic;
 using Artemis.Attributes;
 using Artemis.Manager;
-using Artemis.System;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.GameSystems.Events;
 using OpenHeroesEngine.Utils;
-using OpenHeroesEngine.WorldMap.Components;
-using OpenHeroesEngine.WorldMap.Events;
-using OpenHeroesEngine.WorldMap.Events.World;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 
-namespace OpenHeroesEngine.WorldMap.Systems
+namespace OpenHeroesEngine.GameSystems.Systems
 {
     [ArtemisEntitySystem(GameLoopType = GameLoopType.Update)]
     public class TerritorySystem : EventBasedSystem

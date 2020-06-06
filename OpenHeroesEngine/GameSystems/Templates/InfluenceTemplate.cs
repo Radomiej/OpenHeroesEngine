@@ -2,12 +2,10 @@
 using Artemis.Attributes;
 using Artemis.Interface;
 using OpenHeroesEngine.AStar;
-using OpenHeroesEngine.WorldMap.AI.Decisions;
-using OpenHeroesEngine.WorldMap.AI.State;
+using OpenHeroesEngine.GameSystems.Components;
 using OpenHeroesEngine.WorldMap.Components;
-using OpenHeroesEngine.WorldMap.Models;
 
-namespace OpenHeroesEngine.WorldMap.Templates
+namespace OpenHeroesEngine.GameSystems.Templates
 {
     [ArtemisEntityTemplate("Influence")]
     public class InfluenceTemplate : IEntityTemplate

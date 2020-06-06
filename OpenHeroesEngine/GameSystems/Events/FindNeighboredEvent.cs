@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
-namespace OpenHeroesEngine.WorldMap.Events.World
+namespace OpenHeroesEngine.GameSystems.Events
 {
     public class FindNeighboredEvent
     {

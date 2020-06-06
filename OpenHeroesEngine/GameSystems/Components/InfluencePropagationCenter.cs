@@ -2,7 +2,7 @@
 using Artemis.Attributes;
 using OpenHeroesEngine.AStar;
 
-namespace OpenHeroesEngine.WorldMap.Components
+namespace OpenHeroesEngine.GameSystems.Components
 {
     [ArtemisComponentPool(InitialSize = 10, IsResizable = true, ResizeSize = 5, IsSupportMultiThread = false)]
     public class InfluencePropagationCenter : ComponentPoolable
