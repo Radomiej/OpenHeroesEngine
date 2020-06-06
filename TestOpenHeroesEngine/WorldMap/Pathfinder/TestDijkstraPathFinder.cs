@@ -36,7 +36,7 @@ namespace TestOpenHeroesEngine.Game.Pathfinder
         [Test]
         public void TestPathfinderDynamicChangeCostOfMove()
         {
-            PathFinder pathFinder = new PathFinder(new byte[,]
+            DijkstraPathFinder pathFinder = new DijkstraPathFinder(new byte[,]
             {
                 {1, 1, 1, 1},
                 {1, 1, 1, 1},
@@ -45,7 +45,8 @@ namespace TestOpenHeroesEngine.Game.Pathfinder
             });
             pathFinder.ChangeCostOfMove(1, 1, 0);
             pathFinder.ChangeCostOfMove(2, 2, 0);
-            var result = pathFinder.FindPath(new Point(0, 0), new Point(3, 3));
+            var movementInfo = pathFinder.GetHexesInMovementRange(new Point(0, 0), 8);
+            var result = pathFinder.Find(new Point(0, 0), new Point(3, 3), movementInfo);
             
             Assert.IsNotNull(result);
             Assert.IsNotEmpty(result);

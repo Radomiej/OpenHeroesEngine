@@ -7,7 +7,6 @@ using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.Utils;
-using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
@@ -117,9 +116,9 @@ namespace OpenHeroesEngine.WorldMap.Systems
         [Subscribe]
         public void PlaceObjectOnMapListener(PlaceObjectOnMapEvent placeObjectOnMapEvent)
         {
-            SquareForeach squareForeach = new SquareForeach(placeObjectOnMapEvent.Position, placeObjectOnMapEvent.Size);
-            squareForeach.Data = placeObjectOnMapEvent;
-            squareForeach.ForEach(PlaceObject);
+            RectangleForeach rectangleForeach = new RectangleForeach(placeObjectOnMapEvent.Position, placeObjectOnMapEvent.Size);
+            rectangleForeach.Data = placeObjectOnMapEvent;
+            rectangleForeach.ForEach(PlaceObject);
         }
 
         private void PlaceObject(int x, int y, object data)

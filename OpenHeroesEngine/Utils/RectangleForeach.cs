@@ -1,15 +1,17 @@
-﻿using OpenHeroesEngine.AStar;
+﻿﻿using System.Collections;
+using System.Collections.Generic;
+using OpenHeroesEngine.AStar;
 
 namespace OpenHeroesEngine.Utils
 {
-    public class SquareForeach
+    public class RectangleForeach
     {
         public delegate void SingleNodeHandler(int x, int y, object Data);
 
         public object Data;
         public readonly int StartX, StartY, EndX, EndY;
 
-        public SquareForeach(Point position, Point size)
+        public RectangleForeach(Point position, Point size)
         {
             int positionX = position.X;
             int sizeX = size.X;
@@ -33,6 +35,20 @@ namespace OpenHeroesEngine.Utils
                     singleNodeHandler(x, y, Data);
                 }
             }
+        }
+
+        public List<Point> LikePointList()
+        {
+            List<Point> results = new List<Point>();
+            for (int x = StartX; x < EndX; x++)
+            {
+                for (int y = StartY; y < EndY; y++)
+                {
+                    results.Add(new Point(x, y));
+                }
+            }
+
+            return results;
         }
     }
 }
