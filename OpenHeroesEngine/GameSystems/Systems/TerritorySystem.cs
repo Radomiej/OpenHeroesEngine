@@ -7,6 +7,7 @@ using OpenHeroesEngine.GameSystems.Events;
 using OpenHeroesEngine.Utils;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
+using static OpenHeroesEngine.Logger.Logger;
 
 namespace OpenHeroesEngine.GameSystems.Systems
 {
@@ -40,15 +41,15 @@ namespace OpenHeroesEngine.GameSystems.Systems
 
             if (oldOwner != null && newOwner != null && !oldOwner.Equals(newOwner))
             {
-                Logger.Logger.Debug($"Territory switch from {oldOwner} to {newOwner}");
+                Debug($"Territory {territoryChangeEvent.Position} switch from {oldOwner} to {newOwner}");
             }
             else if (oldOwner != null && !oldOwner.Equals(newOwner))
             {
-                Logger.Logger.Debug($"Territory lost from {oldOwner}");
+                Debug($"Territory {territoryChangeEvent.Position} lost from {oldOwner}");
             }
             else if (newOwner != null && !newOwner.Equals(oldOwner))
             {
-                Logger.Logger.Debug($"Territory gain to {oldOwner}");
+                Debug($"Territory {territoryChangeEvent.Position} gain to {newOwner}");
             }
 
             UpdateBorder(territoryChangeEvent.Position, newOwner);
@@ -78,6 +79,29 @@ namespace OpenHeroesEngine.GameSystems.Systems
                 _borders.Remove(position);
                 territoryLinker.Remove(position);
             }
+        }
+
+        [Subscribe]
+        public void FindNeighboredListener(FindNeighboredEvent findNeighbored)
+        {
+            HashSet<Fraction> _neighboredFraction = new HashSet<Fraction>();
+            List<Point> _neighbors = new List<Point>();
+
+            SquareRadiusForeach rectangleForeach =
+                new SquareRadiusForeach(findNeighbored.Center, 1, _grid.Width, _grid.Height, true);
+
+            rectangleForeach.ForEach((x, y, data) =>
+            {
+                Point point = new Point(x, y);
+                Fraction compareFraction = null;
+                if (territoryLinker.ContainsKey(point)) compareFraction = territoryLinker[point];
+                _neighboredFraction.Add(compareFraction);
+                _neighbors.Add(point);
+            });
+
+            findNeighbored.Neighbors = _neighbors;
+            findNeighbored.NeighborFractions = _neighboredFraction;
+            findNeighbored.Success = true;
         }
     }
 }

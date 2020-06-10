@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
+using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.WorldMap.Models;
 
 namespace OpenHeroesEngine.GameSystems.Events
 {
     public class FindNeighboredEvent
     {
-        public Point Center;
-        public int SquareRadiusSize;
+        public readonly Point Center;
+        public readonly int SquareRadiusSize;
+        public bool Success;
         public List<Point> Neighbors;
+        public HashSet<Fraction> NeighborFractions;
 
         public FindNeighboredEvent(Point center, int squareRadiusSize = 1)
         {

@@ -87,6 +87,15 @@ namespace TestOpenHeroesEngine.WorldMap.GameSystems
                 Assert.IsTrue(findTerritoryOwnerEvent.Success);
                 if (!utp.Equals(testPosition2)) Assert.IsNull(findTerritoryOwnerEvent.Owner);
             }
+            
+            
+            FindNeighboredEvent findNeighbored = new FindNeighboredEvent(testPosition1);
+            JEventBus.GetDefault().Post(findNeighbored);
+            Assert.IsTrue(findNeighbored.Success);
+            Assert.IsNotNull(findNeighbored.NeighborFractions);
+            Assert.IsNotNull(findNeighbored.Neighbors);
+            Assert.AreEqual(2, findNeighbored.NeighborFractions.Count);
+            Assert.AreEqual(8, findNeighbored.Neighbors.Count);
         }
     }
 }

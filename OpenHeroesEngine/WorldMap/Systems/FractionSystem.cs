@@ -105,5 +105,11 @@ namespace OpenHeroesEngine.WorldMap.Systems
                 _eventBus.Post(newFractionEvent);
             }
         }
+        [Subscribe]
+        public void FindFractionListener(FindFractionEvent findFractionEvent)
+        {
+           findFractionEvent.Results = new List<Fraction>(_fractions);
+        }
+        
     }
 }

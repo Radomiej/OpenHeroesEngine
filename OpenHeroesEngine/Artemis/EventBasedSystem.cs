@@ -1,6 +1,7 @@
 ﻿using Artemis;
 using Artemis.System;
 using Radomiej.JavityBus;
+using static OpenHeroesEngine.Logger.Logger;
 
 namespace OpenHeroesEngine.Artemis
 {
@@ -20,6 +21,7 @@ namespace OpenHeroesEngine.Artemis
         {
             _eventBus = BlackBoard.GetEntry<JEventBus>("EventBus") ?? JEventBus.GetDefault();
             _eventBus.Register(this);
+            Debug("System Loaded: " + GetType().Name);
         }
         
         public override void UnloadContent()
