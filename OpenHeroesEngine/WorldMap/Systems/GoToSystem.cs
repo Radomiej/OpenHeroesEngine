@@ -7,6 +7,7 @@ using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
 using Radomiej.JavityBus;
+using static OpenHeroesEngine.Logger.Logger;
 
 namespace OpenHeroesEngine.WorldMap.Systems
 {
@@ -19,7 +20,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
             Entity entity = goToEvent.Entity;
             if (!entity.HasComponent<GeoEntity>())
             {
-                Debug.WriteLine("GoTo ERROR: Missing GeoEntity");
+                Error("GoTo ERROR: Missing GeoEntity");
                 return;
             }
 
@@ -30,7 +31,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
             JEventBus.GetDefault().Post(findPathEvent);
             if (findPathEvent.CalculatedPath == null || findPathEvent.CalculatedPath.Count == 0)
             {
-                Debug.WriteLine("GoTo ERROR: Path not found");
+                Warning("GoTo ERROR: Path not found");
                 return;
             }
 
@@ -49,7 +50,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
                 i++;
             }
 
-            Debug.WriteLine("GoTo OK: " + geoEntity.Position);
+            Debug("GoTo OK: " + geoEntity.Position);
             if (geoEntity.Position.Equals(goToEvent.Goal)) goToEvent.Complete = true;
         }
     }

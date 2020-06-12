@@ -21,7 +21,7 @@ namespace OpenHeroesEngine.WorldMap.Templates
                 Army argArmy = args[0] as Army;
                 
                 e.AddComponent(geoEntity);
-                e.AddComponent(PrepareArmy(entityWorld, argArmy));
+                e.AddComponent(argArmy);
                 e.AddComponent(PrepareArmyAi(entityWorld));
                 return e;
             }
