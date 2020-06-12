@@ -1,6 +1,10 @@
 ﻿using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Armies;
+using OpenHeroesEngine.WorldMap.Events.Obstacles;
+using OpenHeroesEngine.WorldMap.Events.Resources;
+using OpenHeroesEngine.WorldMap.Events.Structures;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 

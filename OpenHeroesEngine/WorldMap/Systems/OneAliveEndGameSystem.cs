@@ -5,6 +5,8 @@ using Artemis.Utils;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Armies;
+using OpenHeroesEngine.WorldMap.Events.State;
 using Radomiej.JavityBus;
 
 namespace OpenHeroesEngine.WorldMap.Systems

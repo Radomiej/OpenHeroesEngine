@@ -2,6 +2,7 @@
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Moves;
 using Radomiej.JavityBus;
 
 namespace TestOpenHeroesEngine.WorldMap.Pathfinder

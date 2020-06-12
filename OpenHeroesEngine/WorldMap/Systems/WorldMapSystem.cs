@@ -2,6 +2,7 @@
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Terrain;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 

@@ -5,6 +5,7 @@ using NUnit.Framework;
 using OpenHeroesEngine;
 using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Armies;
 using OpenHeroesEngine.WorldMap.Models;
 using OpenHeroesServer.Server;
 using OpenHeroesServer.Server.Events;

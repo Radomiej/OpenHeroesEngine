@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using Artemis;
 using Artemis.Attributes;
@@ -8,6 +7,8 @@ using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Armies;
+using OpenHeroesEngine.WorldMap.Events.Moves;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 

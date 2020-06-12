@@ -5,6 +5,8 @@ using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Moves;
+using OpenHeroesEngine.WorldMap.Events.Obstacles;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 

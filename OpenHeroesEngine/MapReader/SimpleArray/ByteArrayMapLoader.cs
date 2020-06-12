@@ -3,6 +3,8 @@ using Artemis;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.Utils;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.State;
+using OpenHeroesEngine.WorldMap.Events.Terrain;
 using OpenHeroesEngine.WorldMap.Factories;
 using Radomiej.JavityBus;
 

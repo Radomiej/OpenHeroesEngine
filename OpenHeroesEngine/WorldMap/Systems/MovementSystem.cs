@@ -6,6 +6,7 @@ using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.Utils;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Moves;
 using Radomiej.JavityBus;
 
 namespace OpenHeroesEngine.WorldMap.Systems

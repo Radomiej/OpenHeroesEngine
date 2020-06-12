@@ -6,6 +6,8 @@ using Artemis.System;
 using OpenHeroesEngine.MapReader;
 using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.State;
+using OpenHeroesEngine.WorldMap.Events.Time;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 

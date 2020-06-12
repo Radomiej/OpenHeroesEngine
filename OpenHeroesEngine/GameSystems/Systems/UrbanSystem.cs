@@ -10,6 +10,7 @@ using OpenHeroesEngine.GameSystems.Events;
 using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Structures;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 

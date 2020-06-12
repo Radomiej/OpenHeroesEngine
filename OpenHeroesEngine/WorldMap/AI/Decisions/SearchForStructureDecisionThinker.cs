@@ -4,7 +4,9 @@ using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.AI.State;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
-using OpenHeroesEngine.WorldMap.Models.Actions;
+using OpenHeroesEngine.WorldMap.Events.Moves;
+using OpenHeroesEngine.WorldMap.Events.Structures;
+using OpenHeroesEngine.WorldMap.Events.Terrain;
 using Radomiej.JavityBus;
 
 namespace OpenHeroesEngine.WorldMap.AI.Decisions
