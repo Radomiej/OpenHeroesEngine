@@ -1,5 +1,5 @@
 ﻿using Artemis;
-using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Actions;
 using OpenHeroesEngine.WorldMap.Models.Actions;
 using Radomiej.JavityBus;
 

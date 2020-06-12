@@ -6,6 +6,7 @@ using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.Utils;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Moves;
 using Radomiej.JavityBus;
 
 namespace OpenHeroesEngine.WorldMap.Systems
@@ -27,7 +28,6 @@ namespace OpenHeroesEngine.WorldMap.Systems
         public void MoveOutListener(MoveOutEvent moveOutEvent)
         {
             //Simulate drawing move army animations - in this case just skip
-            moveOutEvent.MoveToNextEvent.Owner.GetComponent<GeoEntity>().Position = moveOutEvent.Next;
             MoveInEvent moveInEvent =
                 new MoveInEvent(moveOutEvent.Next, moveOutEvent.Current, moveOutEvent.MoveToNextEvent);
             JEventBus.GetDefault().Post(moveInEvent);
@@ -36,6 +36,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
         [Subscribe]
         public void MoveInListener(MoveInEvent moveInEvent)
         {
+            moveInEvent.MoveToNextEvent.Owner.GetComponent<GeoEntity>().Position = moveInEvent.Current;
             moveInEvent.MoveToNextEvent.Owner.GetComponent<Army>().MovementPoints -=
                 DistanceHelper.EuclideanDistance(moveInEvent.Current, moveInEvent.Previous);
         }

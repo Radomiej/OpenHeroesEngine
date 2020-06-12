@@ -2,9 +2,10 @@
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Moves;
 using Radomiej.JavityBus;
 
-namespace TestOpenHeroesEngine.Game.Pathfinder
+namespace TestOpenHeroesEngine.WorldMap.Pathfinder
 {
     public class TestAStarPathFinder
     {
@@ -12,6 +13,7 @@ namespace TestOpenHeroesEngine.Game.Pathfinder
         [SetUp]
         public void Setup()
         {
+            JEventBus.GetDefault().ClearAll();
             _runner = GenericOpenHeroesRunner.CreateInstance();
         }
 

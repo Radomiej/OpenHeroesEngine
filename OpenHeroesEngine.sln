@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenHeroesEngine", "OpenHer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestOpenHeroesEngine", "TestOpenHeroesEngine\TestOpenHeroesEngine.csproj", "{AF4EE358-E3A1-4A86-8C6B-84D7A357FB68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenHeroesServer", "OpenHeroesServer\OpenHeroesServer.csproj", "{632E5132-9516-4729-A9DD-F3FC52739E0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestOpenHeroesServer", "TestOpenHeroesServer\TestOpenHeroesServer.csproj", "{D80096BA-E72A-467A-97DE-0647AEA3F1A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{AF4EE358-E3A1-4A86-8C6B-84D7A357FB68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF4EE358-E3A1-4A86-8C6B-84D7A357FB68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF4EE358-E3A1-4A86-8C6B-84D7A357FB68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{632E5132-9516-4729-A9DD-F3FC52739E0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{632E5132-9516-4729-A9DD-F3FC52739E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{632E5132-9516-4729-A9DD-F3FC52739E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{632E5132-9516-4729-A9DD-F3FC52739E0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D80096BA-E72A-467A-97DE-0647AEA3F1A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D80096BA-E72A-467A-97DE-0647AEA3F1A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D80096BA-E72A-467A-97DE-0647AEA3F1A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D80096BA-E72A-467A-97DE-0647AEA3F1A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
-using Artemis;
 using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
-using OpenHeroesEngine.AStar;
-using OpenHeroesEngine.WorldMap.Components;
-using OpenHeroesEngine.WorldMap.Events;
-using OpenHeroesEngine.WorldMap.Models;
+using OpenHeroesEngine.WorldMap.Events.Actions;
+using OpenHeroesEngine.WorldMap.Events.Time;
 using OpenHeroesEngine.WorldMap.Models.Blockers;
 using Radomiej.JavityBus;
 

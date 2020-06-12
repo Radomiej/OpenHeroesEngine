@@ -3,6 +3,8 @@ using Artemis;
 using OpenHeroesEngine.WorldMap.AI.State;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Moves;
+using OpenHeroesEngine.WorldMap.Events.Resources;
 using OpenHeroesEngine.WorldMap.Models.Actions;
 using Radomiej.JavityBus;
 

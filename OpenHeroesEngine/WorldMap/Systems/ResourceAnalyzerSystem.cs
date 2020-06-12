@@ -7,6 +7,7 @@ using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Resources;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 

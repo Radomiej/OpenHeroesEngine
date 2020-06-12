@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.Utils;
 
 namespace OpenHeroesEngine.Dijkstra
 {
@@ -79,7 +80,7 @@ namespace OpenHeroesEngine.Dijkstra
         {
             List<Hex> neighbors = new List<Hex>();
             Hex currentHex = GetHex(axialCoords);
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 8; i++)
             {
                 Point neighborCoords = currentHex.GetNeighborCoords(i);
                 if (!object.ReferenceEquals(GetHex(neighborCoords), null))
@@ -93,7 +94,7 @@ namespace OpenHeroesEngine.Dijkstra
 
         private Hex GetHex(Point neighborCoords)
         {
-            return pointToHex[neighborCoords];
+            return pointToHex.GetValue(neighborCoords);
         }
 
         public List<Hex> Find(Point start, Point end, HexMovementInfo movementInfo)
@@ -122,6 +123,11 @@ namespace OpenHeroesEngine.Dijkstra
 
             movementPath.Reverse();
             return movementPath;
+        }
+
+        public void ChangeCostOfMove(int x, int y, int movementCost)
+        {
+            pointToHex[new Point(x, y)].MovementCost = movementCost;
         }
     }
 }

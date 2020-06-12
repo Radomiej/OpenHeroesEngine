@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using Artemis;
+﻿using Artemis;
 using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
-using OpenHeroesEngine.WorldMap.Models;
+using OpenHeroesEngine.WorldMap.Events.Moves;
+using OpenHeroesEngine.WorldMap.Events.Structures;
 using Radomiej.JavityBus;
 
 namespace OpenHeroesEngine.WorldMap.Systems

@@ -7,6 +7,8 @@ using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Armies;
+using OpenHeroesEngine.WorldMap.Events.Moves;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 
@@ -16,7 +18,9 @@ namespace OpenHeroesEngine.WorldMap.Systems
     public class ArmyAnalyzerSystem : EventBasedSystem
     {
         private Grid _grid;
+        private HashSet<AddArmyEvent> _armyInCreation = new HashSet<AddArmyEvent>();
         private List<Entity> _armies = new List<Entity>(100);
+        private Dictionary<Fraction, List<Entity>> _fractionToArmy = new Dictionary<Fraction, List<Entity>>();
 
         public ArmyAnalyzerSystem() : base(Aspect.All(typeof(Army), typeof(GeoEntity)))
         {
@@ -28,15 +32,42 @@ namespace OpenHeroesEngine.WorldMap.Systems
             _grid = BlackBoard.GetEntry<Grid>("Grid");
         }
 
+        [Subscribe]
+        public void AddArmyListener(AddArmyEvent addArmyEvent)
+        {
+            _armyInCreation.Add(addArmyEvent);
+            Army army = addArmyEvent.Army;
+            Fraction fraction = army.Fraction;
+
+            if (!_fractionToArmy.ContainsKey(fraction)) _fractionToArmy.Add(fraction, new List<Entity>());
+        }
+
+        public override void Process()
+        {
+            _armyInCreation.Clear();
+        }
+
         public override void OnAdded(Entity entity)
         {
             _armies.Add(entity);
+            Army army = entity.GetComponent<Army>();
+            Fraction fraction = army.Fraction;
+
+            if (!_fractionToArmy.ContainsKey(fraction)) _fractionToArmy.Add(fraction, new List<Entity>());
+            _fractionToArmy[fraction].Add(entity);
         }
 
         public override void OnRemoved(Entity entity)
         {
             Debug.WriteLine("ArmyAnalyze REMOVE Army. Exist: " + _armies.Count);
-            if (_armies.Contains(entity)) _armies.Remove(entity);
+            if (_armies.Contains(entity))
+            {
+                _armies.Remove(entity);
+
+                Army army = entity.GetComponent<Army>();
+                Fraction fraction = army.Fraction;
+                _fractionToArmy[fraction].Remove(entity);
+            }
         }
 
         [Subscribe]
@@ -56,6 +87,16 @@ namespace OpenHeroesEngine.WorldMap.Systems
                 if (distance <= findArmyInArea.MaxDistance) findArmyInArea.Results.Add(entity);
             }
         }
+        [Subscribe]
+        public void FindArmiesInFractionListener(FindArmiesInFraction findArmiesInFraction)
+        {
+            findArmiesInFraction.Success = true;
+            if (!_fractionToArmy.ContainsKey(findArmiesInFraction.Fraction)) return;
+
+            findArmiesInFraction.Results.AddRange(_fractionToArmy[findArmiesInFraction.Fraction]);
+        }
+
+        
 
         [Subscribe]
         public void MoveInListener(MoveInEvent moveInEvent)

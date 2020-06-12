@@ -6,7 +6,9 @@ using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.WorldMap.Components;
-using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Actions;
+using OpenHeroesEngine.WorldMap.Events.Moves;
+using OpenHeroesEngine.WorldMap.Events.Resources;
 using OpenHeroesEngine.WorldMap.Models;
 using OpenHeroesEngine.WorldMap.Models.Actions;
 using Radomiej.JavityBus;
@@ -19,7 +21,7 @@ namespace OpenHeroesEngine.WorldMap.Systems.Actions
     {
         private Grid _grid;
         private Dictionary<long, Entity> _nodeToEntityLinker = new Dictionary<long, Entity>(500);
-        private HashSet<long> _chests = new HashSet<long>(200);
+        private HashSet<long> _chests = new HashSet<long>();
         private ActionDefinition _actionDefinition;
         private List<ActionAnswer> _actionAnswers;
         private Random _random = new Random(123);

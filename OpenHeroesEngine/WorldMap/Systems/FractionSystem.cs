@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Armies;
+using OpenHeroesEngine.WorldMap.Events.Fractions;
+using OpenHeroesEngine.WorldMap.Events.Resources;
+using OpenHeroesEngine.WorldMap.Events.Structures;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
+using static OpenHeroesEngine.Logger.Logger;
 
 namespace OpenHeroesEngine.WorldMap.Systems
 {
@@ -71,8 +75,8 @@ namespace OpenHeroesEngine.WorldMap.Systems
 
             string changedValue = resource.Amount >= 0 ? "+" : "-";
             changedValue += resource.Amount;
-            Debug.WriteLine($"Resource of {fraction.Name} changed: " + fraction.Resources[resource.Definition.Name] +
-                            $"({changedValue})");
+            Debug($"Resource of {fraction.Name} changed: " + fraction.Resources[resource.Definition.Name] +
+                    $"({changedValue})");
         }
 
         [Subscribe]
@@ -91,7 +95,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
             newFraction?.Structures.Add(geoIndex, structure);
             structure.Fraction = newFraction;
 
-            Debug.WriteLine("Mines captured: " + newFraction?.Structures[geoIndex]);
+            Debug("Mines captured: " + newFraction?.Structures[geoIndex]);
         }
 
         [Subscribe]
@@ -105,5 +109,11 @@ namespace OpenHeroesEngine.WorldMap.Systems
                 _eventBus.Post(newFractionEvent);
             }
         }
+        [Subscribe]
+        public void FindFractionListener(FindFractionEvent findFractionEvent)
+        {
+           findFractionEvent.Results = new List<Fraction>(_fractions);
+        }
+        
     }
 }

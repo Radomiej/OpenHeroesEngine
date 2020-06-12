@@ -4,7 +4,10 @@ using Artemis;
 using Artemis.Blackboard;
 using Artemis.System;
 using OpenHeroesEngine.MapReader;
+using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.State;
+using OpenHeroesEngine.WorldMap.Events.Time;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 
@@ -12,35 +15,59 @@ namespace OpenHeroesEngine
 {
     public class GenericOpenHeroesRunner
     {
-        public static GenericOpenHeroesRunner CreateInstance(IMapLoader mapLoader = null)
+        public static GenericOpenHeroesRunner CreateInstance(IMapLoader mapLoader = null, EntityWorld entityWorld = null)
         {
-            return new GenericOpenHeroesRunner(mapLoader);
+            if(mapLoader == null) mapLoader = new ByteArrayMapLoader(ByteArrayHelper.CreateBase());
+            return new GenericOpenHeroesRunner(mapLoader, entityWorld);
         }
 
-        protected EntityWorld entityWorld;
-        protected Turn _turn;
+        protected readonly JEventBus EventBus;
+        protected readonly EntityWorld EntityWorld;
+        protected readonly GameCalendar GameCalendar;
+        private readonly IMapLoader _mapLoader;
+        public bool GameEnded { get; private set; }
 
-        public GenericOpenHeroesRunner(IMapLoader mapLoader = null)
+        public GenericOpenHeroesRunner(IMapLoader mapLoader, EntityWorld entityWorld = null)
         {
-            _turn = new Turn();
+            _mapLoader = mapLoader;
+            EventBus = JEventBus.GetDefault();
+            GameCalendar = new GameCalendar();
             int? internalMapSize = mapLoader?.GetMapSize();
             if (!internalMapSize.HasValue) internalMapSize = 512;
+            Grid grid = new Grid(internalMapSize.Value, internalMapSize.Value);
             
-            EntitySystem.BlackBoard.SetEntry("EventBus", JEventBus.GetDefault());
-            EntitySystem.BlackBoard.SetEntry("Grid", new Grid(internalMapSize.Value, internalMapSize.Value));
-            EntitySystem.BlackBoard.SetEntry("Turn", _turn);
-            entityWorld = new EntityWorld(false, true, true) {PoolCleanupDelay = 1};
-            mapLoader?.LoadMap(entityWorld);
-            JEventBus.GetDefault().Post(new CoreLoadedEvent());
+            EntitySystem.BlackBoard.SetEntry("EventBus", EventBus);
+            EntitySystem.BlackBoard.SetEntry("Grid", grid);
+            EntitySystem.BlackBoard.SetEntry("GameCalendar", GameCalendar);
+            EntitySystem.BlackBoard.SetEntry("TerrainLayer", new TerrainLayer(grid));
+
+            if (entityWorld == null)
+            {
+                EntityWorld = new EntityWorld(false, true, true) {PoolCleanupDelay = 1};
+                LoadMap();
+            }
+            else
+            {
+                EntityWorld = entityWorld;
+            }
         }
 
+        public void LoadMap()
+        {
+            _mapLoader.LoadMap(EntityWorld);
+            EventBus.Post(new CoreLoadedEvent());
+            EventBus.Register(this);
+        }
+        
         public void Draw()
         {
-            entityWorld.Draw();
+            EntityWorld.Draw();
         }
 
         public void Update()
         {
+            if(GameEnded) return;
+            
             CanNextTurnEvent canNextTurnEvent = new CanNextTurnEvent();
             JEventBus.GetDefault().Post(canNextTurnEvent);
 
@@ -49,11 +76,17 @@ namespace OpenHeroesEngine
                 Debug.WriteLine("Are Actions To Finish");
                 return;
             }
-            TurnBeginEvent turnBeginEvent = new TurnBeginEvent(_turn.CurrentTurn);
+            TurnBeginEvent turnBeginEvent = new TurnBeginEvent(GameCalendar.CurrentTurn);
             JEventBus.GetDefault().Post(turnBeginEvent);
-            entityWorld.Update(1000);
-            TurnEndEvent turnEndEvent = new TurnEndEvent(_turn.CurrentTurn++);
+            EntityWorld.Update(1000);
+            TurnEndEvent turnEndEvent = new TurnEndEvent(GameCalendar.CurrentTurn++);
             JEventBus.GetDefault().Post(turnEndEvent);
+        }
+
+        [Subscribe]
+        private void EndGameListener(EndGameEvent endGameEvent)
+        {
+            GameEnded = true;
         }
     }
 }

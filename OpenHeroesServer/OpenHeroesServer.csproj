@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+      <PackageReference Include="WebSocketSharp" Version="1.0.3-rc11" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\OpenHeroesEngine\OpenHeroesEngine.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\wings of war.h3m.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+
+</Project>

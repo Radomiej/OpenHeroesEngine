@@ -7,8 +7,11 @@ using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.Utils;
-using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Moves;
+using OpenHeroesEngine.WorldMap.Events.Obstacles;
+using OpenHeroesEngine.WorldMap.Events.State;
+using OpenHeroesEngine.WorldMap.Events.Terrain;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
 
@@ -55,7 +58,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
         {
             byte costOfMove = _pathFinder.GetCostOfMove(findPathEvent.End.X, findPathEvent.End.Y);
             _pathFinder.ChangeCostOfMove(findPathEvent.End.X, findPathEvent.End.Y, 1);
-            
+
             var result = _pathFinder.FindPath(findPathEvent.Start, findPathEvent.End);
             if (result != null)
             {
@@ -64,7 +67,6 @@ namespace OpenHeroesEngine.WorldMap.Systems
             }
 
             _pathFinder.ChangeCostOfMove(findPathEvent.End.X, findPathEvent.End.Y, costOfMove);
-
         }
 
         [Subscribe]
@@ -83,9 +85,9 @@ namespace OpenHeroesEngine.WorldMap.Systems
             int endY = sizeY > 0 ? positionY + sizeY : positionY;
 
             //Bound checker
-            if(startX < 0 || endX >= _grid.Width) return;
-            if(startY < 0 || endY >= _grid.Height) return;
-            
+            if (startX < 0 || endX >= _grid.Width) return;
+            if (startY < 0 || endY >= _grid.Height) return;
+
             //Obstackle checker
             for (int x = startX; x < endX; x++)
             {
@@ -102,12 +104,25 @@ namespace OpenHeroesEngine.WorldMap.Systems
             isFreeAreaEvent.IsFree = true;
         }
 
+
+        [Subscribe]
+        public void SetToWaterListener(SetToWaterEvent setToWater)
+        {
+            _pathFinder.ChangeCostOfMove(setToWater.CellPosition.X, setToWater.CellPosition.Y, 0);
+        }
+        
+        [Subscribe]
+        public void SetToGroundListener(SetToGroundEvent setToGround)
+        {
+            _pathFinder.ChangeCostOfMove(setToGround.CellPosition.X, setToGround.CellPosition.Y, 1);
+        }
+
         [Subscribe]
         public void PlaceObjectOnMapListener(PlaceObjectOnMapEvent placeObjectOnMapEvent)
         {
-            SquareForeach squareForeach = new SquareForeach(placeObjectOnMapEvent.Position, placeObjectOnMapEvent.Size);
-            squareForeach.Data = placeObjectOnMapEvent;
-            squareForeach.ForEach(PlaceObject);
+            RectangleForeach rectangleForeach = new RectangleForeach(placeObjectOnMapEvent.Position, placeObjectOnMapEvent.Size);
+            rectangleForeach.Data = placeObjectOnMapEvent;
+            rectangleForeach.ForEach(PlaceObject);
         }
 
         private void PlaceObject(int x, int y, object data)
@@ -118,10 +133,11 @@ namespace OpenHeroesEngine.WorldMap.Systems
             {
                 Debug.WriteLine("Attend to override object");
             }
+
             _nodeToEntityLinker.Add(index, placeObjectOnMapEvent.Entity);
             _pathFinder.ChangeCostOfMove(x, y, 0);
         }
-        
+
         private void UnplaceObject(int x, int y)
         {
             var index = _grid.GetNodeIndex(x, y);

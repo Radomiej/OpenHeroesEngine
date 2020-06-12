@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Artemis;
 using Artemis.Attributes;
 using Artemis.Manager;
@@ -10,8 +7,12 @@ using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.Utils;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Fractions;
+using OpenHeroesEngine.WorldMap.Events.Moves;
+using OpenHeroesEngine.WorldMap.Events.Time;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
+using static OpenHeroesEngine.Logger.Logger;
 
 namespace OpenHeroesEngine.WorldMap.Systems
 {
@@ -25,6 +26,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
         {
             base.LoadContent();
             _grid = BlackBoard.GetEntry<Grid>("Grid");
+            Debug("System Loaded: " + GetType().Name);
         }
 
         [Subscribe]

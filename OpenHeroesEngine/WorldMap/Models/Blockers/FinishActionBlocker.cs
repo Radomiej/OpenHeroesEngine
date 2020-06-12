@@ -1,4 +1,4 @@
-﻿using OpenHeroesEngine.WorldMap.Events;
+﻿using OpenHeroesEngine.WorldMap.Events.Actions;
 
 namespace OpenHeroesEngine.WorldMap.Models.Blockers
 {

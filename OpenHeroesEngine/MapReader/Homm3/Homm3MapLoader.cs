@@ -5,6 +5,9 @@ using Artemis.System;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
+using OpenHeroesEngine.WorldMap.Events.Obstacles;
+using OpenHeroesEngine.WorldMap.Events.State;
+using OpenHeroesEngine.WorldMap.Events.Terrain;
 using OpenHeroesEngine.WorldMap.Factories;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
@@ -52,6 +55,12 @@ namespace OpenHeroesEngine.MapReader
             LoadObjects();
             CreateArmies();
             PrintMatrix(terrain);
+            SendWorldLoadedEvent( EntitySystem.BlackBoard.GetEntry<JEventBus>("EventBus"));
+        }
+
+        private void SendWorldLoadedEvent(JEventBus eventBus)
+        {
+            eventBus.Post(new WorldLoadedEvent(terrain));
         }
 
         private void CreateArmies()
@@ -59,8 +68,9 @@ namespace OpenHeroesEngine.MapReader
             foreach (var player in _map.players)
             {
                 if(player.generateHeroAtMainTown == null) continue;
-                MapObjectFactory.AddArmy(player.playerColor, new Point(player.mainTownX, player.mainTownY));
-                terrain[player.mainTownX, player.mainTownY] = 5;
+                Point position = GetOHPosition(new Point(player.mainTownX, player.mainTownY));
+                MapObjectFactory.AddArmy(player.playerColor, new Point(position.X, position.Y));
+                terrain[position.X, position.Y] = 5;
             }
         }
 
@@ -68,18 +78,20 @@ namespace OpenHeroesEngine.MapReader
         {
             int index = 0;
             
+            // for (int y = _map.size - 1; y >= 0; y--)
             for (int y = 0; y < _map.size; y++)
             {
                 for (int x = 0; x < _map.size; x++)
                 {
+                    var position = GetOHPosition(new Point(x, y));
                     var tile = _map.tiles[index];
                     if (tile.terrain == "Water")
                     {
-                        SetWater(new Point(x, y));
+                        SetWater(position);
                     }
 
-                    if (tile.terrain == "Water") terrain[x, y] = 0;
-                    else terrain[x, y] = 1;
+                    if (tile.terrain == "Water") terrain[position.X, position.Y] = 0;
+                    else terrain[position.X, position.Y] = 1;
 
                     index++;
                 }
@@ -111,16 +123,17 @@ namespace OpenHeroesEngine.MapReader
             {
                 if (mapObject.z > 0) continue;
                 Point position = new Point(mapObject.x, mapObject.y);
+                position = GetOHPosition(position);
                 int sizeX = 1;
                 int sizeY = 1;
                 int indexZ = 0;
 
-                CreateWorldObject(mapObject, position);
+                if(!CreateWorldObject(mapObject, position)) continue;
                 for (int y = 6; y > 0; y--)
                 {
                     for (int x = 8; x > 0; x--)
                     {
-                        Point cellPosition = new Point(position.X - (x - 1), position.Y - (y - 1));
+                        Point cellPosition = new Point(position.X - (x - 1), position.Y + (y - 1));
 
                         if (cellPosition.X < 0 || cellPosition.X >= _map.size || cellPosition.Y < 0 ||
                             cellPosition.Y >= _map.size)
@@ -134,7 +147,7 @@ namespace OpenHeroesEngine.MapReader
                             sizeY = Math.Max(sizeY, y);
                             sizeX = Math.Max(sizeX, x);
                             BlockTile(cellPosition);
-                            if(terrain[cellPosition.X, cellPosition.Y]  < 2) terrain[cellPosition.X, cellPosition.Y] = 0;
+                            // if(terrain[cellPosition.X, cellPosition.Y]  < 2) terrain[cellPosition.X, cellPosition.Y] = 0;
                         }
 
                         if (mapObject.def.activeCells.Count > 0 && mapObject.def.activeCells[indexZ] == 1)
@@ -154,9 +167,8 @@ namespace OpenHeroesEngine.MapReader
             }
         }
 
-        private void CreateWorldObject(Object mapObject, Point position)
+        private bool CreateWorldObject(Object mapObject, Point position)
         {
-            
             if(mapObject.def.spriteName.StartsWith("AVTchst0.def")) MapObjectFactory.AddResourcePiles(position, "Chest");
             else if(mapObject.obj.Equals("TREASURE_CHEST")) MapObjectFactory.AddResourcePiles(position, "Chest");
             else if(mapObject.def.spriteName.Equals("adcfra.def")) MapObjectFactory.AddResourcePiles(position, "Chest");
@@ -167,14 +179,16 @@ namespace OpenHeroesEngine.MapReader
             else if(mapObject.obj.Equals("CREATURE_GENERATOR1")) MapObjectFactory.AddStructure(position, "PeasantHabitat");
             else if(mapObject.def.spriteName.StartsWith("AVG")) MapObjectFactory.AddStructure(position, "PeasantHabitat");
             else if(mapObject.obj.Equals("ARTIFACT")) MapObjectFactory.AddResourcePiles(position, "Gold");
-            else return;
+            else return false;
             
             terrain[position.X, position.Y] = 4;
+            return true;
         }
 
         private void SetWater(Point position)
         {
-            AddSingleCellObstacle(position, _waterObstacleDefinition);
+            JEventBus.GetDefault().Post(new SetToWaterEvent(position));
+            // AddSingleCellObstacle(position, _waterObstacleDefinition);
         }
 
         private void BlockTile(Point position)
@@ -188,6 +202,12 @@ namespace OpenHeroesEngine.MapReader
             AddObstacleOnWorldMapEvent addObstacleOnWorldMapEvent =
                 new AddObstacleOnWorldMapEvent(obstacle, position);
             JEventBus.GetDefault().Post(addObstacleOnWorldMapEvent);
+        }
+
+        private Point GetOHPosition(Point homm3Position)
+        {
+            return new Point(homm3Position.X, _map.size - 1 - homm3Position.Y);
+            // return new Point(homm3Position.X,  homm3Position.Y);
         }
     }
 }
