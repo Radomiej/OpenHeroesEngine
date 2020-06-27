@@ -176,8 +176,8 @@ namespace OpenHeroesEngine.MapReader
             else if(mapObject.def.spriteName.StartsWith("avt")) MapObjectFactory.AddResourcePiles(position, "Chest");
             else if(mapObject.obj.Equals("RESOURCE")) MapObjectFactory.AddResourcePiles(position, "Gold");
             else if(mapObject.obj.Equals("RANDOM_RESOURCE")) MapObjectFactory.AddResourcePiles(position, "Gold");
-            else if(mapObject.obj.Equals("CREATURE_GENERATOR1")) MapObjectFactory.AddStructure(position, "PeasantHabitat");
-            else if(mapObject.def.spriteName.StartsWith("AVG")) MapObjectFactory.AddStructure(position, "PeasantHabitat");
+            else if(mapObject.obj.Equals("CREATURE_GENERATOR1")) MapObjectFactory.AddHabitat(position, new CreatureDefinition("Peasant"));
+            else if(mapObject.def.spriteName.StartsWith("AVG")) MapObjectFactory.AddHabitat(position, new CreatureDefinition("Peasant"));
             else if(mapObject.obj.Equals("ARTIFACT")) MapObjectFactory.AddResourcePiles(position, "Gold");
             else return false;
             

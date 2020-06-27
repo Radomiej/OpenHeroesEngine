@@ -3,6 +3,7 @@ using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.WorldMap.Api;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Events.Moves;
@@ -24,16 +25,8 @@ namespace OpenHeroesEngine.WorldMap.Systems
             if (moveInEvent.MoveToNextEvent.Owner.HasComponent<Army>())
             {
                 Army army = moveInEvent.MoveToNextEvent.Owner.GetComponent<Army>();
-                AddMineToFraction(findNearestStructure.Nearest, army);
+                MinesApi.AddMineToFraction(findNearestStructure.Nearest, army.Fraction);
             }
         }
-
-        private void AddMineToFraction(Entity structureEntity, Army army)
-        {
-            Structure structure = structureEntity.GetComponent<Structure>();
-            AddStructureToFractionEvent addStructureToFractionEvent = new AddStructureToFractionEvent(structure, army.Fraction, structureEntity);
-            _eventBus.Post(addStructureToFractionEvent);
-        }
-
     }
 }

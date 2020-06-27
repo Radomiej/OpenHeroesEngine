@@ -1,4 +1,5 @@
 ﻿using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.WorldMap.Api;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Events.Armies;
@@ -12,11 +13,6 @@ namespace OpenHeroesEngine.WorldMap.Factories
 {
     public class MapObjectFactory
     {
-        private static void SendEvent(JEventBus eventBus, object eventToSend)
-        {
-            if(eventBus == null) eventBus = JEventBus.GetDefault();
-            eventBus.Post(eventToSend);
-        }
 
         public static void AddResourcePiles(Point position, string resourceName, int amount = 1, JEventBus eventBus = null)
         {
@@ -25,10 +21,10 @@ namespace OpenHeroesEngine.WorldMap.Factories
             AddResourceOnWorldMapEvent addResourceOnWorldMapEvent =
                 new AddResourceOnWorldMapEvent(resource, position);
             
-            SendEvent(eventBus, addResourceOnWorldMapEvent);
+           BaseApi.SendEvent(eventBus, addResourceOnWorldMapEvent);
         }
 
-        public static void AddArmy(string name, Point startPosition, JEventBus eventBus = null)
+        public static void AddArmy(string name, Point startPosition, bool addAi = true, JEventBus eventBus = null)
         {
             CreatureDefinition creatureDefinition = new CreatureDefinition("Peasant");
             Creature creature = new Creature(creatureDefinition, 10);
@@ -38,8 +34,8 @@ namespace OpenHeroesEngine.WorldMap.Factories
             army.Fraction.Resources.Add("Gold", new Resource(new ResourceDefinition("Gold"), 500));
             army.Creatures.Add(creature);
 
-            AddArmyEvent addArmyEvent = new AddArmyEvent(army, startPosition);
-            SendEvent(eventBus, addArmyEvent);
+            AddArmyEvent addArmyEvent = new AddArmyEvent(army, startPosition, addAi);
+            BaseApi.SendEvent(eventBus, addArmyEvent);
         }
 
         public static void AddObstacle(Point position, ObstacleDefinition obstacleDefinition, JEventBus eventBus = null)
@@ -47,7 +43,7 @@ namespace OpenHeroesEngine.WorldMap.Factories
             Obstacle obstacle = new Obstacle(obstacleDefinition);
             AddObstacleOnWorldMapEvent addObstacleOnWorldMapEvent =
                 new AddObstacleOnWorldMapEvent(obstacle, position);
-            SendEvent(eventBus, addObstacleOnWorldMapEvent);
+            BaseApi.SendEvent(eventBus, addObstacleOnWorldMapEvent);
         }
 
         public static void AddStructure(Point position, string structureName, JEventBus eventBus = null)
@@ -56,7 +52,33 @@ namespace OpenHeroesEngine.WorldMap.Factories
             Structure structure = new Structure(structureDefinition);
             AddStructureOnWorldMapEvent addStructureOnWorldMapEvent =
                 new AddStructureOnWorldMapEvent(structure, position);
-            SendEvent(eventBus, addStructureOnWorldMapEvent);
+            BaseApi.SendEvent(eventBus, addStructureOnWorldMapEvent);
+        }
+        
+        public static void AddMine(Point position, ResourceDefinition resourceDefinition, int production = 500, JEventBus eventBus = null)
+        {
+            string structureName = resourceDefinition.Name + "Mine";
+            StructureDefinition structureDefinition = new StructureDefinition(structureName, new Point(1, 1));
+            Structure structure = new Structure(structureDefinition);
+            AddStructureOnWorldMapEvent addStructureOnWorldMapEvent =
+                new AddStructureOnWorldMapEvent(structure, position);
+            addStructureOnWorldMapEvent.Params.Add("template", "Mine");
+            addStructureOnWorldMapEvent.Params.Add("production", production);
+            addStructureOnWorldMapEvent.Params.Add("definition", resourceDefinition);
+            BaseApi.SendEvent(eventBus, addStructureOnWorldMapEvent);
+        }
+        
+        public static void AddHabitat(Point position, CreatureDefinition creatureDefinition, int production = 7, JEventBus eventBus = null)
+        {
+            string structureName = creatureDefinition.Name + "Habitat";
+            StructureDefinition structureDefinition = new StructureDefinition(structureName, new Point(1, 1));
+            Structure structure = new Structure(structureDefinition);
+            AddStructureOnWorldMapEvent addStructureOnWorldMapEvent =
+                new AddStructureOnWorldMapEvent(structure, position);
+            addStructureOnWorldMapEvent.Params.Add("template", "Habitat");
+            addStructureOnWorldMapEvent.Params.Add("production", production);
+            addStructureOnWorldMapEvent.Params.Add("definition", creatureDefinition);
+            BaseApi.SendEvent(eventBus, addStructureOnWorldMapEvent);
         }
     }
 }

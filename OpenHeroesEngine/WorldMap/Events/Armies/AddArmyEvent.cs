@@ -7,11 +7,13 @@ namespace OpenHeroesEngine.WorldMap.Events.Armies
     {
         public readonly Point Position;
         public readonly Army Army;
+        public readonly bool AddAi;
 
-        public AddArmyEvent(Army army, Point position)
+        public AddArmyEvent(Army army, Point position, bool addAi)
         {
             Army = army;
             Position = position;
+            this.AddAi = addAi;
         }
     }
 }

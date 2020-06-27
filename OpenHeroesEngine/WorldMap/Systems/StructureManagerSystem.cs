@@ -42,13 +42,18 @@ namespace OpenHeroesEngine.WorldMap.Systems
         {
             Structure structure = addStructureOnWorldMapEvent.Structure;
             Point position = addStructureOnWorldMapEvent.Position;
-            
-            if (addStructureOnWorldMapEvent.Structure.Definition.Name.EndsWith("Mine")) return CreateMine(structure, position);
-            if (addStructureOnWorldMapEvent.Structure.Definition.Name.EndsWith("Habitat")) return CreateHabitat(structure, position);
 
-            return entityWorld.CreateEntityFromTemplate("Structure",
-                addStructureOnWorldMapEvent.Structure,
-                addStructureOnWorldMapEvent.Position);
+            string templateName = "Structure";
+            if (addStructureOnWorldMapEvent.Params.ContainsKey("template"))
+            {
+                if (addStructureOnWorldMapEvent.Params["template"] is string readValue) templateName = readValue;
+            }
+
+            // if (addStructureOnWorldMapEvent.Structure.Definition.Name.EndsWith("Mine")) return CreateMine(structure, position);
+            // if (addStructureOnWorldMapEvent.Structure.Definition.Name.EndsWith("Habitat")) return CreateHabitat(structure, position);
+
+            return entityWorld.CreateEntityFromTemplate(templateName,
+                structure, position, addStructureOnWorldMapEvent.Params);
         }
 
         private Entity CreateHabitat(Structure structure, Point position)

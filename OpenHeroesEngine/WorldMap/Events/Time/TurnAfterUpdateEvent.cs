@@ -1,10 +1,10 @@
 ﻿namespace OpenHeroesEngine.WorldMap.Events.Time
 {
-    public class TurnBeginEvent : IStatusEvent
+    public class TurnAfterUpdateEvent : IStatusEvent
     {
         public readonly int TurnNumber;
 
-        public TurnBeginEvent(int turnNumber)
+        public TurnAfterUpdateEvent(int turnNumber)
         {
             TurnNumber = turnNumber;
         }

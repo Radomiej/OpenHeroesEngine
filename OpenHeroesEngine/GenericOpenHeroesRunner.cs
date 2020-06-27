@@ -76,11 +76,11 @@ namespace OpenHeroesEngine
                 Debug.WriteLine("Are Actions To Finish");
                 return;
             }
-            TurnBeginEvent turnBeginEvent = new TurnBeginEvent(GameCalendar.CurrentTurn);
-            JEventBus.GetDefault().Post(turnBeginEvent);
+            TurnBeforeUpdateEvent turnBeforeUpdateEvent = new TurnBeforeUpdateEvent(GameCalendar.CurrentTurn);
+            JEventBus.GetDefault().Post(turnBeforeUpdateEvent);
             EntityWorld.Update(1000);
-            TurnEndEvent turnEndEvent = new TurnEndEvent(GameCalendar.CurrentTurn++);
-            JEventBus.GetDefault().Post(turnEndEvent);
+            TurnAfterUpdateEvent turnAfterUpdateEvent = new TurnAfterUpdateEvent(GameCalendar.CurrentTurn++);
+            JEventBus.GetDefault().Post(turnAfterUpdateEvent);
         }
 
         [Subscribe]
