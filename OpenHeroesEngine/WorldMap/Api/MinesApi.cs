@@ -26,6 +26,7 @@ namespace OpenHeroesEngine.WorldMap.Api
             FindNearestStructure findNearestStructure = new FindNearestStructure(tilePosition, 0);
             eventBus.Post(findNearestStructure);
             var entity = findNearestStructure.Nearest;
+            if(entity == null) return;
             AddMineToFraction(entity, fraction, eventBus);
         }
     }

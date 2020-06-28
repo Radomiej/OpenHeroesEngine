@@ -69,15 +69,15 @@ namespace OpenHeroesEngine.GameSystems.Systems
                 if (deepSearch) UpdateBorder(point, compareFraction, false);
             });
 
+            territoryLinker[position] = owner;
+            
             if (isBorder)
             {
                 _borders.Add(position);
-                territoryLinker[position] = owner;
             }
             else
             {
                 _borders.Remove(position);
-                territoryLinker.Remove(position);
             }
         }
 

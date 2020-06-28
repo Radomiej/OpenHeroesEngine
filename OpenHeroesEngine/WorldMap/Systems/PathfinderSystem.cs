@@ -7,6 +7,7 @@ using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.Utils;
+using OpenHeroesEngine.WorldMap.Api;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Events.Moves;
 using OpenHeroesEngine.WorldMap.Events.Obstacles;
@@ -57,7 +58,12 @@ namespace OpenHeroesEngine.WorldMap.Systems
         public void FindPathListener(FindPathEvent findPathEvent)
         {
             byte costOfMove = _pathFinder.GetCostOfMove(findPathEvent.End.X, findPathEvent.End.Y);
-            _pathFinder.ChangeCostOfMove(findPathEvent.End.X, findPathEvent.End.Y, 1);
+            
+            bool entranceMode = TerrainApi.IsGround(findPathEvent.End) && StructureApi.IsEntrance(findPathEvent.End);
+            if (entranceMode)
+            {
+                _pathFinder.ChangeCostOfMove(findPathEvent.End.X, findPathEvent.End.Y, 1);
+            }
 
             var result = _pathFinder.FindPath(findPathEvent.Start, findPathEvent.End);
             if (result != null)
@@ -66,7 +72,10 @@ namespace OpenHeroesEngine.WorldMap.Systems
                 findPathEvent.CalculatedPath.Reverse();
             }
 
-            _pathFinder.ChangeCostOfMove(findPathEvent.End.X, findPathEvent.End.Y, costOfMove);
+            if (entranceMode)
+            {
+                _pathFinder.ChangeCostOfMove(findPathEvent.End.X, findPathEvent.End.Y, costOfMove);
+            }
         }
 
         [Subscribe]

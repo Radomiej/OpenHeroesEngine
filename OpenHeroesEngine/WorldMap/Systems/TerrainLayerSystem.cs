@@ -50,5 +50,13 @@ namespace OpenHeroesEngine.WorldMap.Systems
             var position = setToGroundEvent.CellPosition;
             _terrainLayer.Terrain[position.X, position.Y] = 1;
         }
+        
+        [Subscribe]
+        public void FindTileTypeListener(FindTileTypeEvent findTileTypeEvent)
+        {
+            var position = findTileTypeEvent.CellPosition;
+            findTileTypeEvent.Result = _terrainLayer.Terrain[position.X, position.Y];
+            findTileTypeEvent.Success = true;
+        }
     }
 }
