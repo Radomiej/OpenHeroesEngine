@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Artemis.Attributes;
 using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
+using OpenHeroesEngine.WorldMap.Api;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Events.Armies;
@@ -27,19 +29,35 @@ namespace OpenHeroesEngine.WorldMap.Systems
         }
 
         [Subscribe]
+        public void FractionCanAffordOnSpentResourceListener(FindFractionCanAffordOnSpentResourceEvent fractionCanAfford)
+        {
+            Fraction fraction = fractionCanAfford.Fraction;
+            int maxAmount = int.MaxValue;
+            
+            foreach (var resource in fractionCanAfford.Resources)
+            {
+                int fractionAmount = GetFractionAmountOfResource(fraction, resource.Definition);
+                int tempAmount = fractionAmount / resource.Amount;
+                maxAmount = Math.Min(tempAmount, maxAmount);
+            }
+
+            fractionCanAfford.Success = true;
+            fractionCanAfford.MaxAmount = maxAmount;
+        }
+
+        private int GetFractionAmountOfResource(Fraction fraction, ResourceDefinition resourceDefinition)
+        {
+            return FractionApi.GetFractionAmountOfResource(fraction, resourceDefinition);
+        }
+
+        [Subscribe]
         public void RemoveResourceListener(RemoveResourceFromFractionEvent removeResourceFromFraction)
         {
             if(removeResourceFromFraction.Fraction == null) return;
             Fraction fraction = removeResourceFromFraction.Fraction;
             Resource resource = removeResourceFromFraction.Resource;
 
-            if (!fraction.Resources.ContainsKey(resource.Definition.Name))
-            {
-               //The faction has no resources of this type
-               return;
-            }
-
-            if (fraction.Resources[resource.Definition.Name].Amount >= resource.Amount) // The faction can afford to buy MAX
+            if (GetFractionAmountOfResource(fraction, resource.Definition) >= resource.Amount) // The faction can afford to buy MAX
             {
                 removeResourceFromFraction.Success = true;
             }
