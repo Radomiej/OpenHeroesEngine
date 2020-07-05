@@ -2,7 +2,7 @@
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
 
-namespace OpenHeroesEngine.GameSystems.Events
+namespace OpenHeroesEngine.GameSystems.Events.Territory
 {
     public class TerritoryChangeEvent : IHardEvent
     {

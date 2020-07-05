@@ -3,6 +3,7 @@ using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.GameSystems.Api;
 using OpenHeroesEngine.GameSystems.Events;
+using OpenHeroesEngine.GameSystems.Events.Territory;
 using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.Utils;
 using OpenHeroesEngine.WorldMap.Models;
@@ -47,6 +48,8 @@ namespace TestOpenHeroesEngine.WorldMap.GameSystems
             Assert.IsTrue(checkTestPositionOwner.Success);
             Assert.IsNotNull(checkTestPositionOwner.Owner);
             Assert.IsTrue(testFraction == checkTestPositionOwner.Owner);
+
+            Assert.AreEqual(1, TerritoryApi.GetTerritoryCellsAmount(testFraction));
 
             foreach (var utp in new SquareRadiusForeach(testPosition, 1, 8, 8, true).LikePointList())
             {
@@ -115,6 +118,8 @@ namespace TestOpenHeroesEngine.WorldMap.GameSystems
             Assert.IsTrue(checkTestPositionOwner.Success);
             Assert.IsNotNull(checkTestPositionOwner.Owner);
             Assert.AreEqual(testFraction, checkTestPositionOwner.Owner);
+            
+            Assert.AreEqual(4, TerritoryApi.GetTerritoryCellsAmount(testFraction));
         }
         
         [Test]
@@ -133,6 +138,8 @@ namespace TestOpenHeroesEngine.WorldMap.GameSystems
             Assert.IsTrue(checkTestPositionOwner.Success);
             Assert.IsNotNull(checkTestPositionOwner.Owner);
             Assert.AreEqual(testFraction, checkTestPositionOwner.Owner);
+            
+            Assert.AreEqual(9, TerritoryApi.GetTerritoryCellsAmount(testFraction));
         }
 
     }

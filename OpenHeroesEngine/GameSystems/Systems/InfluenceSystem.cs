@@ -5,6 +5,7 @@ using Artemis.System;
 using OpenHeroesEngine.Dijkstra;
 using OpenHeroesEngine.GameSystems.Components;
 using OpenHeroesEngine.GameSystems.Events;
+using OpenHeroesEngine.GameSystems.Events.Influence;
 using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Models;

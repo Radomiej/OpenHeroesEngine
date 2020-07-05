@@ -1,9 +1,10 @@
 ﻿using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
 
-namespace OpenHeroesEngine.GameSystems.Events
+namespace OpenHeroesEngine.GameSystems.Events.Territory
 {
-    public class FindTerritoryOwnerEvent
+    public class FindTerritoryOwnerEvent : IFindEvent
     {
         public readonly Point Position;
         public bool Success = false;

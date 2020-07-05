@@ -2,6 +2,7 @@
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.GameSystems.Events;
+using OpenHeroesEngine.GameSystems.Events.Influence;
 using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
@@ -37,10 +38,10 @@ namespace TestOpenHeroesEngine.WorldMap.GameSystems
         {
             Fraction testFraction = new Fraction("test");
             Point testPosition = new Point(4, 4);
-            
+
             CreateInfluenceCenterEvent createInfluenceCenterEvent = new CreateInfluenceCenterEvent(testPosition, 100f);
             JEventBus.GetDefault().Post(createInfluenceCenterEvent);
-            
+
             _runner.Update();
         }
     }

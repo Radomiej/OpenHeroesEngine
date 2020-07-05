@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
 
-namespace OpenHeroesEngine.GameSystems.Events
+namespace OpenHeroesEngine.GameSystems.Events.Territory
 {
-    public class FindNeighboredEvent
+    public class FindNeighboredEvent : IFindEvent
     {
         public readonly Point Center;
         public readonly int SquareRadiusSize;

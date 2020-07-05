@@ -4,6 +4,7 @@ using Artemis.Manager;
 using OpenHeroesEngine.Artemis;
 using OpenHeroesEngine.AStar;
 using OpenHeroesEngine.GameSystems.Events;
+using OpenHeroesEngine.GameSystems.Events.Territory;
 using OpenHeroesEngine.Utils;
 using OpenHeroesEngine.WorldMap.Models;
 using Radomiej.JavityBus;
@@ -15,8 +16,12 @@ namespace OpenHeroesEngine.GameSystems.Systems
     public class TerritorySystem : EventBasedSystem
     {
         private Grid _grid;
-        private Dictionary<Point, Fraction> territoryLinker = new Dictionary<Point, Fraction>(100);
-        private HashSet<Point> _borders = new HashSet<Point>();
+        private readonly Dictionary<Point, Fraction> _territoryLinker = new Dictionary<Point, Fraction>(100);
+
+        private readonly Dictionary<Fraction, HashSet<Point>> _fractionLinker =
+            new Dictionary<Fraction, HashSet<Point>>(100);
+
+        private readonly HashSet<Point> _borders = new HashSet<Point>();
 
         public override void LoadContent()
         {
@@ -28,16 +33,17 @@ namespace OpenHeroesEngine.GameSystems.Systems
         [Subscribe]
         public void FindTerritoryOwnerEventListener(FindTerritoryOwnerEvent findTerritoryOwnerEvent)
         {
-            findTerritoryOwnerEvent.Owner = territoryLinker.GetValue(findTerritoryOwnerEvent.Position);
+            findTerritoryOwnerEvent.Owner = _territoryLinker.GetValue(findTerritoryOwnerEvent.Position);
             findTerritoryOwnerEvent.Success = true;
         }
 
         [Subscribe]
         public void TerritoryChangeListener(TerritoryChangeEvent territoryChangeEvent)
         {
-            Fraction oldOwner = territoryLinker.GetValue(territoryChangeEvent.Position);
+            Fraction oldOwner = _territoryLinker.GetValue(territoryChangeEvent.Position);
             Fraction newOwner = territoryChangeEvent.NewOwner;
-            territoryLinker[territoryChangeEvent.Position] = newOwner;
+            ChangeOwner(territoryChangeEvent.Position, oldOwner, newOwner);
+
 
             if (oldOwner != null && newOwner != null && !oldOwner.Equals(newOwner))
             {
@@ -55,6 +61,26 @@ namespace OpenHeroesEngine.GameSystems.Systems
             UpdateBorder(territoryChangeEvent.Position, newOwner);
         }
 
+        private void ChangeOwner(Point position, Fraction oldOwner, Fraction newOwner)
+        {
+            _territoryLinker[position] = newOwner;
+
+            if (oldOwner != null && _fractionLinker.ContainsKey(oldOwner))
+            {
+                _fractionLinker[oldOwner].Remove(position);
+            }
+
+            if (newOwner != null && !_fractionLinker.ContainsKey(newOwner))
+            {
+                _fractionLinker.Add(newOwner, new HashSet<Point>());
+            }
+
+            if (newOwner != null)
+            {
+                _fractionLinker[newOwner].Add(position);
+            }
+        }
+
         private void UpdateBorder(Point position, Fraction owner, bool deepSearch = true)
         {
             bool isBorder = false;
@@ -63,14 +89,12 @@ namespace OpenHeroesEngine.GameSystems.Systems
             {
                 Point point = new Point(x, y);
                 Fraction compareFraction = null;
-                if (territoryLinker.ContainsKey(point)) compareFraction = territoryLinker[point];
+                if (_territoryLinker.ContainsKey(point)) compareFraction = _territoryLinker[point];
 
                 if (compareFraction != owner) isBorder = true;
                 if (deepSearch) UpdateBorder(point, compareFraction, false);
             });
 
-            territoryLinker[position] = owner;
-            
             if (isBorder)
             {
                 _borders.Add(position);
@@ -94,7 +118,7 @@ namespace OpenHeroesEngine.GameSystems.Systems
             {
                 Point point = new Point(x, y);
                 Fraction compareFraction = null;
-                if (territoryLinker.ContainsKey(point)) compareFraction = territoryLinker[point];
+                if (_territoryLinker.ContainsKey(point)) compareFraction = _territoryLinker[point];
                 _neighboredFraction.Add(compareFraction);
                 _neighbors.Add(point);
             });
@@ -102,6 +126,19 @@ namespace OpenHeroesEngine.GameSystems.Systems
             findNeighbored.Neighbors = _neighbors;
             findNeighbored.NeighborFractions = _neighboredFraction;
             findNeighbored.Success = true;
+        }
+
+        [Subscribe]
+        public void FindTerritoriesCellListener(FindTerritoriesCellEvent findTerritoriesCell)
+        {
+            if (findTerritoriesCell.Owner == null)
+            {
+                Error("Owner cannot be null.");
+                return;
+            }
+
+            findTerritoriesCell.Success = true;
+            findTerritoriesCell.Results = new List<Point>(_fractionLinker[findTerritoriesCell.Owner]);
         }
     }
 }
