@@ -13,7 +13,6 @@ namespace OpenHeroesEngine.AStar
             this.X = X;
             this.Y = Y;
         }
-
         public override string ToString()
         {
             return $"{nameof(X)}: {X}, {nameof(Y)}: {Y}";

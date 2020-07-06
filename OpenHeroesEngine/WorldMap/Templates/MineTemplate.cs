@@ -1,4 +1,5 @@
-﻿using Artemis;
+﻿using System.Collections.Generic;
+using Artemis;
 using Artemis.Attributes;
 using Artemis.Interface;
 using OpenHeroesEngine.AStar;
@@ -12,6 +13,8 @@ namespace OpenHeroesEngine.WorldMap.Templates
     {
         public Entity BuildEntity(Entity e, EntityWorld entityWorld, params object[] args)
         {
+            Dictionary<string, object> paramsDictionary = (Dictionary<string, object>) args[2];
+            
             GeoEntity geoEntity = entityWorld.GetComponentFromPool<GeoEntity>();
             geoEntity.Position = args[1] as Point;
             e.AddComponent(geoEntity);
@@ -22,8 +25,8 @@ namespace OpenHeroesEngine.WorldMap.Templates
             e.AddComponent(structure);
             
             Mine mine = entityWorld.GetComponentFromPool<Mine>();
-            mine.ResourceDefinition = args[2] as ResourceDefinition;
-            mine.Production = (int) args[3];
+            mine.ResourceDefinition = paramsDictionary["definition"] as ResourceDefinition;
+            mine.Production = (int) paramsDictionary["production"];
             e.AddComponent(mine);
 
             return e;

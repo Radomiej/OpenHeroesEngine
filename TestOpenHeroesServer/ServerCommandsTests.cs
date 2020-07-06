@@ -43,7 +43,7 @@ namespace TestOpenHeroesServer
             playerId = _client.PlayerInfo.Id;
         }
 
-        [Test]
+        // [Test]
         public void FindPathRequestEventTest()
         {
             FindPathRequestEvent findPathRequestEvent = new FindPathRequestEvent(new Point(1, 1), new Point(5, 5));

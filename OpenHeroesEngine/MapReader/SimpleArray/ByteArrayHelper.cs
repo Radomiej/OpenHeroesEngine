@@ -2,7 +2,7 @@
 {
     public class ByteArrayHelper
     {
-        public static byte[,] CreateBase(int size = 512, byte defaultValue = 1)
+        public static byte[,] CreateBase(int size = 64, byte defaultValue = 1)
         {
             byte[,] mapBase = new byte[size, size];
             for (int x = 0; x < mapBase.GetLength(0); x += 1)

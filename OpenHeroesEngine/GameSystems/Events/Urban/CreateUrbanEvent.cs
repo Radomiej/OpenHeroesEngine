@@ -1,8 +1,9 @@
 ﻿using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.WorldMap.Events;
 
-namespace OpenHeroesEngine.GameSystems.Events
+namespace OpenHeroesEngine.GameSystems.Events.Urban
 {
-    public class CreateUrbanEvent
+    public class CreateUrbanEvent : IHardEvent
     {
         public Point Position;
         public int Population;

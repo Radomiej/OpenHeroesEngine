@@ -1,15 +1,15 @@
 ﻿using OpenHeroesEngine.AStar;
-using OpenHeroesEngine.GameSystems.Components;
+using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
 
-namespace OpenHeroesEngine.GameSystems.Events
+namespace OpenHeroesEngine.GameSystems.Events.Urban
 {
-    public class FindUrbanInformationEvent
+    public class FindUrbanInformationEvent : IFindEvent
     {
         public readonly Point Position;
         public bool Success = false;
         public Fraction Owner;
-        public Urban Urban;
+        public Components.Urban Urban;
 
         public FindUrbanInformationEvent(Point position)
         {

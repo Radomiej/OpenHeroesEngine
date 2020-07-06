@@ -1,9 +1,10 @@
 ﻿using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Models;
 
-namespace OpenHeroesEngine.GameSystems.Events
+namespace OpenHeroesEngine.GameSystems.Events.Territory
 {
-    public class TerritoryChangeEvent
+    public class TerritoryChangeEvent : IHardEvent
     {
         public readonly Point Position;
         public readonly Fraction NewOwner;

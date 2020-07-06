@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Events.Obstacles;
@@ -24,7 +25,7 @@ namespace TestOpenHeroesEngine.WorldMap.AI
         [Test]
         public void TestCreateRunnerAndInvokeGameLoop()
         {
-            var runner = GenericOpenHeroesRunner.CreateInstance();
+            var runner = GenericOpenHeroesRunner.CreateInstance(new ByteArrayMapLoader(ByteArrayHelper.CreateBase(128)));
             MapObjectFactory.AddArmy("Red", new Point(1, 1));
             MapObjectFactory.AddArmy("Blue", new Point(128, 128));
             AddBuildings();
@@ -47,14 +48,11 @@ namespace TestOpenHeroesEngine.WorldMap.AI
         {
             Random random = new Random(93);
 
-            StructureDefinition structureDefinition = new StructureDefinition("GoldMine", new Point(2, 1));
+            ResourceDefinition resourceDefinition = new ResourceDefinition("Gold");
             for (int i = 0; i < 15; i++)
             {
                 Point position = new Point(random.Next(512), random.Next(512));
-                Structure structure = new Structure(structureDefinition);
-                AddStructureOnWorldMapEvent addStructureOnWorldMapEvent =
-                    new AddStructureOnWorldMapEvent(structure, position);
-                JEventBus.GetDefault().Post(addStructureOnWorldMapEvent);
+                MapObjectFactory.AddMine(position, resourceDefinition);
             }
         }
         
@@ -62,14 +60,11 @@ namespace TestOpenHeroesEngine.WorldMap.AI
         {
             Random random = new Random(08);
 
-            StructureDefinition structureDefinition = new StructureDefinition("PeasantHabitat", new Point(2, 1));
+            CreatureDefinition creatureDefinition = new CreatureDefinition("Peasant");
             for (int i = 0; i < 50; i++)
             {
                 Point position = new Point(random.Next(512), random.Next(512));
-                Structure structure = new Structure(structureDefinition);
-                AddStructureOnWorldMapEvent addStructureOnWorldMapEvent =
-                    new AddStructureOnWorldMapEvent(structure, position);
-                JEventBus.GetDefault().Post(addStructureOnWorldMapEvent);
+                MapObjectFactory.AddHabitat(position, creatureDefinition);
             }
         }
 
@@ -87,10 +82,7 @@ namespace TestOpenHeroesEngine.WorldMap.AI
             for (int i = 0; i < 100; i++)
             {
                 Point position = new Point(random.Next(512), random.Next(512));
-                Obstacle obstacle = new Obstacle(obstacleDefinition);
-                AddObstacleOnWorldMapEvent addObstacleOnWorldMapEvent =
-                    new AddObstacleOnWorldMapEvent(obstacle, position);
-                JEventBus.GetDefault().Post(addObstacleOnWorldMapEvent);
+                MapObjectFactory.AddObstacle(position, obstacleDefinition);
             }
         }
 
@@ -102,10 +94,7 @@ namespace TestOpenHeroesEngine.WorldMap.AI
             for (int i = 0; i < 25; i++)
             {
                 Point position = new Point(random.Next(512), random.Next(512));
-                Obstacle obstacle = new Obstacle(obstacleDefinition);
-                AddObstacleOnWorldMapEvent addObstacleOnWorldMapEvent =
-                    new AddObstacleOnWorldMapEvent(obstacle, position);
-                JEventBus.GetDefault().Post(addObstacleOnWorldMapEvent);
+                MapObjectFactory.AddObstacle(position, obstacleDefinition);
             }
         }
 

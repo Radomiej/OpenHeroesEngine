@@ -44,9 +44,9 @@ namespace OpenHeroesServer.Server.Systems
         }
         
         [Subscribe]
-        public void TurnEndListener(TurnEndEvent turnEndEvent)
+        public void TurnEndListener(TurnAfterUpdateEvent turnAfterUpdateEvent)
         {
-            RedirectLike(turnEndEvent, turnEndEvent);
+            RedirectLike(turnAfterUpdateEvent, turnAfterUpdateEvent);
         }
         
         [Subscribe]

@@ -35,7 +35,7 @@ namespace TestOpenHeroesServer
             Thread.Sleep(2000);
         }
 
-        [Test]
+        // [Test]
         public void SimpleConnectionToServerTest()
         {
             var client = new OHSWebSocketClient("localhost", freePort);

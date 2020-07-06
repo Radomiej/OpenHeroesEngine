@@ -1,7 +1,9 @@
 ﻿using NUnit.Framework;
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.GameSystems.Api;
 using OpenHeroesEngine.GameSystems.Events;
+using OpenHeroesEngine.GameSystems.Events.Territory;
 using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.Utils;
 using OpenHeroesEngine.WorldMap.Models;
@@ -47,6 +49,8 @@ namespace TestOpenHeroesEngine.WorldMap.GameSystems
             Assert.IsNotNull(checkTestPositionOwner.Owner);
             Assert.IsTrue(testFraction == checkTestPositionOwner.Owner);
 
+            Assert.AreEqual(1, TerritoryApi.GetTerritoryCellsAmount(testFraction));
+
             foreach (var utp in new SquareRadiusForeach(testPosition, 1, 8, 8, true).LikePointList())
             {
                 FindTerritoryOwnerEvent findTerritoryOwnerEvent = new FindTerritoryOwnerEvent(utp);
@@ -87,8 +91,8 @@ namespace TestOpenHeroesEngine.WorldMap.GameSystems
                 Assert.IsTrue(findTerritoryOwnerEvent.Success);
                 if (!utp.Equals(testPosition2)) Assert.IsNull(findTerritoryOwnerEvent.Owner);
             }
-            
-            
+
+
             FindNeighboredEvent findNeighbored = new FindNeighboredEvent(testPosition1);
             JEventBus.GetDefault().Post(findNeighbored);
             Assert.IsTrue(findNeighbored.Success);
@@ -97,5 +101,46 @@ namespace TestOpenHeroesEngine.WorldMap.GameSystems
             Assert.AreEqual(2, findNeighbored.NeighborFractions.Count);
             Assert.AreEqual(8, findNeighbored.Neighbors.Count);
         }
+
+        [Test]
+        public void TestEncirclementBug1()
+        {
+            Fraction testFraction = new Fraction("test");
+            Point testPosition = new Point(0, 0);
+            PositionBuilder positionBuilder = new PositionBuilder(testPosition);
+            TerritoryApi.ChangeTerritoryOwner(testPosition, testFraction);
+            TerritoryApi.ChangeTerritoryOwner(positionBuilder.Top(), testFraction);
+            TerritoryApi.ChangeTerritoryOwner(positionBuilder.Right(), testFraction);
+            TerritoryApi.ChangeTerritoryOwner(positionBuilder.TopRight(), testFraction);
+
+            FindTerritoryOwnerEvent checkTestPositionOwner = new FindTerritoryOwnerEvent(testPosition);
+            JEventBus.GetDefault().Post(checkTestPositionOwner);
+            Assert.IsTrue(checkTestPositionOwner.Success);
+            Assert.IsNotNull(checkTestPositionOwner.Owner);
+            Assert.AreEqual(testFraction, checkTestPositionOwner.Owner);
+            
+            Assert.AreEqual(4, TerritoryApi.GetTerritoryCellsAmount(testFraction));
+        }
+        
+        [Test]
+        public void TestEncirclementBug2()
+        {
+            Fraction testFraction = new Fraction("test");
+            Point testPosition = new Point(2, 2);
+
+            foreach (var utp in new SquareRadiusForeach(testPosition, 1, 8, 8).LikePointList())
+            {
+               TerritoryApi.ChangeTerritoryOwner(utp, testFraction);
+            }
+            
+            FindTerritoryOwnerEvent checkTestPositionOwner = new FindTerritoryOwnerEvent(testPosition);
+            JEventBus.GetDefault().Post(checkTestPositionOwner);
+            Assert.IsTrue(checkTestPositionOwner.Success);
+            Assert.IsNotNull(checkTestPositionOwner.Owner);
+            Assert.AreEqual(testFraction, checkTestPositionOwner.Owner);
+            
+            Assert.AreEqual(9, TerritoryApi.GetTerritoryCellsAmount(testFraction));
+        }
+
     }
 }

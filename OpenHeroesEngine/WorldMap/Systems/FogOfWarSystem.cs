@@ -69,7 +69,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
         }
 
         [Subscribe]
-        public void TurnEndListener(TurnBeginEvent turnBeginEvent)
+        public void TurnEndListener(TurnBeforeUpdateEvent turnBeforeUpdateEvent)
         {
             for (int x = 0; x < _grid.Width; x++)
             {
@@ -84,7 +84,7 @@ namespace OpenHeroesEngine.WorldMap.Systems
         }
 
         [Subscribe]
-        public void TurnBeginListener(TurnBeginEvent turnBeginEvent)
+        public void TurnBeginListener(TurnBeforeUpdateEvent turnBeforeUpdateEvent)
         {
             var armies = entityWorld.EntityManager.GetEntities(Aspect.All(typeof(Army)));
             foreach (var army in armies)
