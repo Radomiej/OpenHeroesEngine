@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Radomiej.JavityBus.Utils;
 
 namespace Radomiej.JavityBus
 {
@@ -28,8 +29,8 @@ namespace Radomiej.JavityBus
         }
 
 
-        private Dictionary<Type, List<Delegate>> subscribtions = new Dictionary<Type, List<Delegate>>();
-        private Dictionary<object, List<Delegate>> recivers = new Dictionary<object, List<Delegate>>();
+        private Dictionary<Type, SortedList<PriorityDelegate>> subscribtions = new Dictionary<Type, SortedList<PriorityDelegate>>();
+        private Dictionary<object, List<PriorityDelegate>> recivers = new Dictionary<object, List<PriorityDelegate>>();
 
         private string _name;
 
@@ -65,17 +66,34 @@ namespace Radomiej.JavityBus
                 return;
             }
 
-            List<Delegate> receiverDelegates = subscribtions[eventObject.GetType()];
+            SortedList<PriorityDelegate> receiverDelegates = subscribtions[eventObject.GetType()];
             for (int i = 0; i < receiverDelegates.Count; i++)
             {
-                Delegate delegateToInvoke = receiverDelegates[i];
+                Delegate delegateToInvoke = receiverDelegates[i].Handler;
                 delegateToInvoke?.DynamicInvoke(eventObject);
             }
         }
 
+        public delegate void RawSubscribe(object incomingEvent);
+        public void Register(object objectToRegister, IJEventSubscriberRaw subscriberRaw)
+        {
+            RawSubscribe singleDelegate = subscriberRaw.SubscribeRaw;
+            int priority = subscriberRaw.GetPriority();
+           
+            PriorityDelegate priorityDelegate = AddSubscription(subscriberRaw.GetEventType(), singleDelegate, priority);
+            
+            if (!recivers.ContainsKey(objectToRegister))
+            {
+                var delegates = new List<PriorityDelegate>();
+                recivers.Add(objectToRegister, delegates);
+            } 
+            
+            recivers[objectToRegister].Add(priorityDelegate);
+        }
+
         public void Register(object objectToRegister)
         {
-            recivers.Add(objectToRegister, new List<Delegate>());
+            recivers.Add(objectToRegister, new List<PriorityDelegate>());
 
             MethodInfo[] methods = objectToRegister.GetType().GetMethods(BindingFlags.NonPublic |
                                                                          BindingFlags.Instance | BindingFlags.Public);
@@ -84,7 +102,7 @@ namespace Radomiej.JavityBus
                 object[] attributes = methods[m].GetCustomAttributes(true);
                 for (int i = 0; i < attributes.Length; i++)
                 {
-                    if (attributes[i] is Subscribe)
+                    if (attributes[i] is Subscribe subscribe)
                     {
                         MethodInfo method = methods[m];
                         if (method.GetParameters().Length != 1) continue;
@@ -104,16 +122,25 @@ namespace Radomiej.JavityBus
                         }
 
                         Delegate d = Delegate.CreateDelegate(delegateType, objectToRegister, method.Name);
-                        if (!subscribtions.ContainsKey(firstArgument.ParameterType))
-                        {
-                            subscribtions.Add(firstArgument.ParameterType, new List<Delegate>());
-                        }
-
-                        subscribtions[firstArgument.ParameterType].Add(d);
-                        recivers[objectToRegister].Add(d);
+                        PriorityDelegate priorityDelegate = AddSubscription(firstArgument.ParameterType, d, subscribe.priority);
+                        recivers[objectToRegister].Add(priorityDelegate);
                     }
                 }
             }
+        }
+
+        private PriorityDelegate AddSubscription(Type eventType, Delegate d, int priority = 0)
+        {
+            PriorityDelegate priorityDelegate = new PriorityDelegate(priority, d);
+            if (!subscribtions.ContainsKey(eventType))
+            {
+                // subscribtions.Add(eventType, new List<PriorityDelegate>());
+                subscribtions.Add(eventType, new SortedList<PriorityDelegate>());
+            }
+            
+
+            subscribtions[eventType].Add(priorityDelegate);
+            return priorityDelegate;
         }
 
         public void Unregister(object objectToUnregister)
@@ -132,9 +159,9 @@ namespace Radomiej.JavityBus
                         if (method.GetParameters().Length != 1) continue;
 
                         ParameterInfo firstArgument = method.GetParameters()[0];
-                        foreach (Delegate d in recivers[objectToUnregister])
+                        foreach (PriorityDelegate priorityDelegate in recivers[objectToUnregister])
                         {
-                            subscribtions[firstArgument.ParameterType].Remove(d);
+                            subscribtions[firstArgument.ParameterType].Remove(priorityDelegate);
                         }
                     }
                 }
