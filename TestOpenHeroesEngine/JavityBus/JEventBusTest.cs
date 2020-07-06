@@ -94,6 +94,48 @@ namespace TestOpenHeroesEngine.JavityBus
                 JEventBus.GetDefault().Post(toBeAbortedEvent));
         }
 
+        
+         [Test]
+        public void TestStage()
+        {
+            int iteration = 100;
+
+
+            var subscriber1 = new RawSubscriber<TestEventWithParam>(myEvent =>
+            {
+                myEvent.Param++;
+            });
+            var subscriber2 = new RawSubscriber<TestEventWithParam>(myEvent =>
+            {
+                myEvent.Param++;
+            }, 1);
+            var subscriber3 = new RawSubscriber<TestEventWithParam>(myEvent =>
+            {
+                myEvent.Param++;
+            }, 3);
+            JEventBus.GetDefault().Register(this, subscriber3);
+            JEventBus.GetDefault().Register(this, subscriber2);
+            JEventBus.GetDefault().BeginStage();
+            JEventBus.GetDefault().Register(this, subscriber1);
+
+
+            for (int i = 0; i < iteration; i++)
+            {
+                var testEvent = new TestEventWithParam();
+                JEventBus.GetDefault().Post(testEvent);
+                Assert.AreEqual(3, testEvent.Param);
+            }
+
+            JEventBus.GetDefault().CloseStage();
+            
+            for (int i = 0; i < iteration; i++)
+            {
+                var testEvent = new TestEventWithParam();
+                JEventBus.GetDefault().Post(testEvent);
+                Assert.AreEqual(2, testEvent.Param);
+            }
+        }
+        
         [Test]
         public void TestInterceptors()
         {

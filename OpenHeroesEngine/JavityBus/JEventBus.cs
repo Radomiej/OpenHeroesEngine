@@ -81,6 +81,30 @@ namespace Radomiej.JavityBus
             _eventBuses.Remove(_name);
         }
 
+        private SubscriptionStage _stage;
+
+        public void BeginStage()
+        {
+            if (_stage != null) throw new NotSupportedException("Before begin new stage you must close a previous one");
+            _stage = new SubscriptionStage();
+        }
+
+        public void CloseStage()
+        {
+            foreach (var receiver in _stage.receivers)
+            {
+                Unregister(receiver);
+            }
+            foreach (var subscription in _stage.subscriptions)
+            {
+                foreach (var dDelegate in subscription.Value)
+                {
+                    _subscriptions[subscription.Key].Remove(dDelegate);
+                }
+            }
+            _stage = null;
+        }
+
         public void AddInterceptor(IRawInterceptor interceptor, InterceptorType interceptorType = InterceptorType.Pre)
         {
             if (interceptorType == InterceptorType.Pre) _preInterceptors.Add(interceptor);
@@ -135,7 +159,8 @@ namespace Radomiej.JavityBus
                 }
                 catch (TargetInvocationException targetInvocationException)
                 {
-                    if (targetInvocationException.InnerException != null && targetInvocationException.InnerException is StopPropagationException stopPropagationException)
+                    if (targetInvocationException.InnerException != null &&
+                        targetInvocationException.InnerException is StopPropagationException stopPropagationException)
                         throw stopPropagationException;
                     throw;
                 }
@@ -157,20 +182,21 @@ namespace Radomiej.JavityBus
             RawSubscribe singleDelegate = subscriber.SubscribeRaw;
             int priority = subscriber.GetPriority();
 
+            AddReceiver(objectToRegister);
             PriorityDelegate priorityDelegate = AddSubscription(subscriber.GetEventType(), singleDelegate, priority);
-
-            if (!_receivers.ContainsKey(objectToRegister))
-            {
-                var delegates = new List<PriorityDelegate>();
-                _receivers.Add(objectToRegister, delegates);
-            }
-
             _receivers[objectToRegister].Add(priorityDelegate);
         }
 
         public void Register(object objectToRegister)
         {
-            _receivers.Add(objectToRegister, new List<PriorityDelegate>());
+            bool alreadyRegistered = !AddReceiver(objectToRegister);
+            if (alreadyRegistered)
+            {
+#if DEBUG
+                Logger.Warning("You want register object twice");
+#endif
+                return;
+            }
 
             MethodInfo[] methods = objectToRegister.GetType().GetMethods(BindingFlags.NonPublic |
                                                                          BindingFlags.Instance | BindingFlags.Public);
@@ -207,17 +233,26 @@ namespace Radomiej.JavityBus
             }
         }
 
+        private bool AddReceiver(object receiverToRegister)
+        {
+            if (_receivers.ContainsKey(receiverToRegister)) return false;
+
+            _receivers.Add(receiverToRegister, new List<PriorityDelegate>());
+            _stage?.AddReceiver(receiverToRegister);
+            return true;
+        }
+
         private PriorityDelegate AddSubscription(Type eventType, Delegate d, int priority = 0)
         {
             PriorityDelegate priorityDelegate = new PriorityDelegate(priority, d);
             if (!_subscriptions.ContainsKey(eventType))
             {
-                // subscribtions.Add(eventType, new List<PriorityDelegate>());
                 _subscriptions.Add(eventType, new SortedList<PriorityDelegate>());
             }
 
 
             _subscriptions[eventType].Add(priorityDelegate);
+            _stage?.AddSubscription(priorityDelegate, eventType);
             return priorityDelegate;
         }
 
