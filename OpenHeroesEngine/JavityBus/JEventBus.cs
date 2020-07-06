@@ -133,10 +133,9 @@ namespace Radomiej.JavityBus
                 return;
             }
 
-            ProcessEventInInterceptors(eventObject, _preInterceptors);
-
             try
             {
+                ProcessEventInInterceptors(eventObject, _preInterceptors);
                 PropagateEvent(eventObject);
                 ProcessEventInInterceptors(eventObject, _postInterceptors);
             }
@@ -171,7 +170,18 @@ namespace Radomiej.JavityBus
         {
             foreach (var interceptor in handlers)
             {
-                interceptor.SubscribeRaw(eventObject);
+                try
+                {
+                    interceptor.SubscribeRaw(eventObject);
+                }
+                catch (TargetInvocationException targetInvocationException)
+                {
+                    if (targetInvocationException.InnerException != null &&
+                        targetInvocationException.InnerException is StopPropagationException stopPropagationException)
+                        throw stopPropagationException;
+                    throw;
+                }
+              
             }
         }
 

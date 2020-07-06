@@ -8,6 +8,7 @@ using OpenHeroesEngine.Logger;
 using OpenHeroesEngine.MapReader;
 using Radomiej.JavityBus;
 using Radomiej.JavityBus.Exceptions;
+using Radomiej.JavityBus.ResolverQueue;
 using TestOpenHeroesEngine.JavityBus.Events;
 using TestOpenHeroesEngine.JavityBus.TestImplementation;
 
@@ -94,25 +95,16 @@ namespace TestOpenHeroesEngine.JavityBus
                 JEventBus.GetDefault().Post(toBeAbortedEvent));
         }
 
-        
-         [Test]
+
+        [Test]
         public void TestStage()
         {
             int iteration = 100;
 
 
-            var subscriber1 = new RawSubscriber<TestEventWithParam>(myEvent =>
-            {
-                myEvent.Param++;
-            });
-            var subscriber2 = new RawSubscriber<TestEventWithParam>(myEvent =>
-            {
-                myEvent.Param++;
-            }, 1);
-            var subscriber3 = new RawSubscriber<TestEventWithParam>(myEvent =>
-            {
-                myEvent.Param++;
-            }, 3);
+            var subscriber1 = new RawSubscriber<TestEventWithParam>(myEvent => { myEvent.Param++; });
+            var subscriber2 = new RawSubscriber<TestEventWithParam>(myEvent => { myEvent.Param++; }, 1);
+            var subscriber3 = new RawSubscriber<TestEventWithParam>(myEvent => { myEvent.Param++; }, 3);
             JEventBus.GetDefault().Register(this, subscriber3);
             JEventBus.GetDefault().Register(this, subscriber2);
             JEventBus.GetDefault().BeginStage();
@@ -127,7 +119,7 @@ namespace TestOpenHeroesEngine.JavityBus
             }
 
             JEventBus.GetDefault().CloseStage();
-            
+
             for (int i = 0; i < iteration; i++)
             {
                 var testEvent = new TestEventWithParam();
@@ -135,7 +127,7 @@ namespace TestOpenHeroesEngine.JavityBus
                 Assert.AreEqual(2, testEvent.Param);
             }
         }
-        
+
         [Test]
         public void TestInterceptors()
         {
@@ -241,6 +233,33 @@ namespace TestOpenHeroesEngine.JavityBus
                 JEventBus.GetDefault().Post(testEvent);
                 Assert.AreEqual(3, testEvent.Param);
             }
+        }
+
+        [Test]
+        public void TestEventResolverQueue()
+        {
+            int counter = 0;
+            var subscriber = new RawSubscriber<TestEvent>(myEvent => counter++);
+            JEventBus.GetDefault().Register(this, subscriber);
+            var resolverQueue = new ResolverQueue(JEventBus.GetDefault());
+            JEventBus.GetDefault().Post(new AddEventToResolve(typeof(TestEvent)));
+
+            var testEvent = new TestEvent();
+            for (int i = 0; i < 100; i++)
+            {
+                JEventBus.GetDefault().Post(testEvent);
+            }
+
+            Assert.AreEqual(0, counter);
+            JEventBus.GetDefault().Post(new ResolveEvent(typeof(TestEvent)));
+            Assert.AreEqual(100, counter);
+
+            for (int i = 0; i < 100; i++)
+            {
+                JEventBus.GetDefault().Post(testEvent);
+            }
+
+            Assert.AreEqual(200, counter);
         }
 
         [Test]
