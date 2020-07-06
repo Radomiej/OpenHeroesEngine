@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Events.Moves;
 using Radomiej.JavityBus;
@@ -9,17 +10,16 @@ namespace TestOpenHeroesEngine.WorldMap.Pathfinder
 {
     public class TestAStarPathFinder
     {
-        private GenericOpenHeroesRunner _runner;
         [SetUp]
         public void Setup()
         {
             JEventBus.GetDefault().ClearAll();
-            _runner = GenericOpenHeroesRunner.CreateInstance();
         }
 
         [Test]
         public void TestPathfinderSystem()
         {
+            GenericOpenHeroesRunner.CreateInstance(new ByteArrayMapLoader(ByteArrayHelper.CreateBase(128)));
             FindPathEvent findPathEvent = new FindPathEvent(new Point(0, 0), new Point(100, 100));
             JEventBus.GetDefault().Post(findPathEvent);
             

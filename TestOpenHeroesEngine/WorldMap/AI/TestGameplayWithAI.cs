@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using OpenHeroesEngine;
 using OpenHeroesEngine.AStar;
+using OpenHeroesEngine.MapReader.SimpleArray;
 using OpenHeroesEngine.WorldMap.Components;
 using OpenHeroesEngine.WorldMap.Events;
 using OpenHeroesEngine.WorldMap.Events.Obstacles;
@@ -24,7 +25,7 @@ namespace TestOpenHeroesEngine.WorldMap.AI
         [Test]
         public void TestCreateRunnerAndInvokeGameLoop()
         {
-            var runner = GenericOpenHeroesRunner.CreateInstance();
+            var runner = GenericOpenHeroesRunner.CreateInstance(new ByteArrayMapLoader(ByteArrayHelper.CreateBase(128)));
             MapObjectFactory.AddArmy("Red", new Point(1, 1));
             MapObjectFactory.AddArmy("Blue", new Point(128, 128));
             AddBuildings();
