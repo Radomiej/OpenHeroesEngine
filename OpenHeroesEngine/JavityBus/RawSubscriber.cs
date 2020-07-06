@@ -2,12 +2,12 @@
 
 namespace Radomiej.JavityBus
 {
-    public class JEventSubscriber<T> : IJEventSubscriberRaw where T : class
+    public class RawSubscriber<T> : IRawSubscriber where T : class
     {
         private readonly Action<T> _handler;
         private readonly int _priority;
         
-        public JEventSubscriber(Action<T> handler, int priority = 0)
+        public RawSubscriber(Action<T> handler, int priority = 0)
         {
             _handler = handler;
             this._priority = priority;

@@ -6,7 +6,7 @@ using Logger = OpenHeroesEngine.Logger.Logger;
 
 namespace TestOpenHeroesEngine.JavityBus.TestImplementation
 {
-    public class TestEventSubscriberRaw : IJEventSubscriberRaw
+    public class TestEventSubscriber : IRawSubscriber
     {
         public int EventCounter = 0;
         public void SubscribeRaw(object incomingEvent)

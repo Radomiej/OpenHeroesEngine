@@ -3,97 +3,174 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using OpenHeroesEngine.Logger;
+using Radomiej.JavityBus.Exceptions;
 using Radomiej.JavityBus.Utils;
 
 namespace Radomiej.JavityBus
 {
     public class JEventBus
     {
-        private static Dictionary<string, JEventBus> eventBuses = new Dictionary<string, JEventBus>();
+        public enum InterceptorType
+        {
+            Pre,
+            Post,
+            Unhandled,
+            Aborted
+        }
+
+        private static Dictionary<string, JEventBus> _eventBuses = new Dictionary<string, JEventBus>();
+        private static JEventBus _defaultInstance;
 
         public static JEventBus GetEventBusByName(string eventBusName)
         {
-            return eventBuses[eventBusName];
+            return _eventBuses[eventBusName];
         }
-
-        private static JEventBus defaultInstance;
 
         public static JEventBus GetDefault()
         {
-            if (defaultInstance == null)
+            if (_defaultInstance == null)
             {
-                defaultInstance = new JEventBus();
-                defaultInstance.Awake();
+                _defaultInstance = new JEventBus();
+                _defaultInstance.Init();
             }
-            return defaultInstance;
+
+            return _defaultInstance;
         }
 
 
-        private Dictionary<Type, SortedList<PriorityDelegate>> subscribtions = new Dictionary<Type, SortedList<PriorityDelegate>>();
-        private Dictionary<object, List<PriorityDelegate>> recivers = new Dictionary<object, List<PriorityDelegate>>();
+        private readonly Dictionary<Type, SortedList<PriorityDelegate>> _subscriptions =
+            new Dictionary<Type, SortedList<PriorityDelegate>>();
+
+        private readonly Dictionary<object, List<PriorityDelegate>> _receivers =
+            new Dictionary<object, List<PriorityDelegate>>();
+
+        private readonly SortedList<IRawInterceptor> _preInterceptors =
+            new SortedList<IRawInterceptor>(new RawInterceptorComparer());
+
+        private readonly SortedList<IRawInterceptor> _postInterceptors =
+            new SortedList<IRawInterceptor>(new RawInterceptorComparer());
+
+        private readonly SortedList<IRawInterceptor> _unhandledInterceptors =
+            new SortedList<IRawInterceptor>(new RawInterceptorComparer());
+
+        private readonly SortedList<IRawInterceptor> _abortedInterceptors =
+            new SortedList<IRawInterceptor>(new RawInterceptorComparer());
 
         private string _name;
 
-        void Awake(string eventBusName = "default")
+        void Init(string eventBusName = "default")
         {
             _name = eventBusName;
-            
-            if (eventBuses.ContainsKey(_name))
+
+            if (_eventBuses.ContainsKey(_name))
             {
                 // Debug.LogWarning("Overriding exist EventBus with name: " + _name);
             }
 
-            eventBuses.Add(_name, this);
+            _eventBuses.Add(_name, this);
         }
 
         void OnDestroy()
         {
-            if (defaultInstance == this)
+            if (_defaultInstance == this)
             {
                 //defaultInstance = null;
             }
 
-            eventBuses.Remove(_name);
+            _eventBuses.Remove(_name);
+        }
+
+        public void AddInterceptor(IRawInterceptor interceptor, InterceptorType interceptorType = InterceptorType.Pre)
+        {
+            if (interceptorType == InterceptorType.Pre) _preInterceptors.Add(interceptor);
+            else if (interceptorType == InterceptorType.Post) _postInterceptors.Add(interceptor);
+            else if (interceptorType == InterceptorType.Unhandled) _unhandledInterceptors.Add(interceptor);
+            else if (interceptorType == InterceptorType.Aborted) _abortedInterceptors.Add(interceptor);
+        }
+
+        public void RemoveInterceptor(IRawInterceptor interceptor,
+            InterceptorType interceptorType = InterceptorType.Pre)
+        {
+            if (interceptorType == InterceptorType.Pre) _preInterceptors.Remove(interceptor);
+            else if (interceptorType == InterceptorType.Post) _postInterceptors.Remove(interceptor);
+            else if (interceptorType == InterceptorType.Unhandled) _unhandledInterceptors.Remove(interceptor);
+            else if (interceptorType == InterceptorType.Aborted) _abortedInterceptors.Remove(interceptor);
         }
 
         public void Post(object eventObject)
         {
-            if (!subscribtions.ContainsKey(eventObject.GetType()))
+            if (!_subscriptions.ContainsKey(eventObject.GetType()))
             {
-                #if DEBUG
-                // Debug.LogWarning("Receiver for event: " + eventObject.GetType() + " not exist");
-                #endif
+#if DEBUG
+                Logger.Warning("Receiver for event: " + eventObject.GetType() + " not exist");
+#endif
+                ProcessEventInInterceptors(eventObject, _unhandledInterceptors);
                 return;
             }
 
-            SortedList<PriorityDelegate> receiverDelegates = subscribtions[eventObject.GetType()];
-            for (int i = 0; i < receiverDelegates.Count; i++)
+            ProcessEventInInterceptors(eventObject, _preInterceptors);
+
+            try
+            {
+                PropagateEvent(eventObject);
+                ProcessEventInInterceptors(eventObject, _postInterceptors);
+            }
+            catch (StopPropagationException stopPropagationException)
+            {
+                ProcessEventInInterceptors(eventObject, _abortedInterceptors);
+            }
+        }
+
+        private void PropagateEvent(object eventObject)
+        {
+            SortedList<PriorityDelegate> receiverDelegates = _subscriptions[eventObject.GetType()];
+            int receiversCount = receiverDelegates.Count;
+            for (int i = 0; i < receiversCount; i++)
             {
                 Delegate delegateToInvoke = receiverDelegates[i].Handler;
-                delegateToInvoke?.DynamicInvoke(eventObject);
+                try
+                {
+                    delegateToInvoke?.DynamicInvoke(eventObject);
+                }
+                catch (TargetInvocationException targetInvocationException)
+                {
+                    if (targetInvocationException.InnerException != null && targetInvocationException.InnerException is StopPropagationException stopPropagationException)
+                        throw stopPropagationException;
+                    throw;
+                }
+            }
+        }
+
+        private void ProcessEventInInterceptors(object eventObject, SortedList<IRawInterceptor> handlers)
+        {
+            foreach (var interceptor in handlers)
+            {
+                interceptor.SubscribeRaw(eventObject);
             }
         }
 
         public delegate void RawSubscribe(object incomingEvent);
-        public void Register(object objectToRegister, IJEventSubscriberRaw subscriberRaw)
+
+        public void Register(object objectToRegister, IRawSubscriber subscriber)
         {
-            RawSubscribe singleDelegate = subscriberRaw.SubscribeRaw;
-            int priority = subscriberRaw.GetPriority();
-           
-            PriorityDelegate priorityDelegate = AddSubscription(subscriberRaw.GetEventType(), singleDelegate, priority);
-            
-            if (!recivers.ContainsKey(objectToRegister))
+            RawSubscribe singleDelegate = subscriber.SubscribeRaw;
+            int priority = subscriber.GetPriority();
+
+            PriorityDelegate priorityDelegate = AddSubscription(subscriber.GetEventType(), singleDelegate, priority);
+
+            if (!_receivers.ContainsKey(objectToRegister))
             {
                 var delegates = new List<PriorityDelegate>();
-                recivers.Add(objectToRegister, delegates);
-            } 
-            
-            recivers[objectToRegister].Add(priorityDelegate);
+                _receivers.Add(objectToRegister, delegates);
+            }
+
+            _receivers[objectToRegister].Add(priorityDelegate);
         }
 
         public void Register(object objectToRegister)
         {
-            recivers.Add(objectToRegister, new List<PriorityDelegate>());
+            _receivers.Add(objectToRegister, new List<PriorityDelegate>());
 
             MethodInfo[] methods = objectToRegister.GetType().GetMethods(BindingFlags.NonPublic |
                                                                          BindingFlags.Instance | BindingFlags.Public);
@@ -122,8 +199,9 @@ namespace Radomiej.JavityBus
                         }
 
                         Delegate d = Delegate.CreateDelegate(delegateType, objectToRegister, method.Name);
-                        PriorityDelegate priorityDelegate = AddSubscription(firstArgument.ParameterType, d, subscribe.priority);
-                        recivers[objectToRegister].Add(priorityDelegate);
+                        PriorityDelegate priorityDelegate =
+                            AddSubscription(firstArgument.ParameterType, d, subscribe.priority);
+                        _receivers[objectToRegister].Add(priorityDelegate);
                     }
                 }
             }
@@ -132,20 +210,20 @@ namespace Radomiej.JavityBus
         private PriorityDelegate AddSubscription(Type eventType, Delegate d, int priority = 0)
         {
             PriorityDelegate priorityDelegate = new PriorityDelegate(priority, d);
-            if (!subscribtions.ContainsKey(eventType))
+            if (!_subscriptions.ContainsKey(eventType))
             {
                 // subscribtions.Add(eventType, new List<PriorityDelegate>());
-                subscribtions.Add(eventType, new SortedList<PriorityDelegate>());
+                _subscriptions.Add(eventType, new SortedList<PriorityDelegate>());
             }
-            
 
-            subscribtions[eventType].Add(priorityDelegate);
+
+            _subscriptions[eventType].Add(priorityDelegate);
             return priorityDelegate;
         }
 
         public void Unregister(object objectToUnregister)
         {
-            if (!recivers.ContainsKey(objectToUnregister)) return;
+            if (!_receivers.ContainsKey(objectToUnregister)) return;
 
             MethodInfo[] methods = objectToUnregister.GetType().GetMethods();
             for (int m = 0; m < methods.Length; m++)
@@ -159,21 +237,25 @@ namespace Radomiej.JavityBus
                         if (method.GetParameters().Length != 1) continue;
 
                         ParameterInfo firstArgument = method.GetParameters()[0];
-                        foreach (PriorityDelegate priorityDelegate in recivers[objectToUnregister])
+                        foreach (PriorityDelegate priorityDelegate in _receivers[objectToUnregister])
                         {
-                            subscribtions[firstArgument.ParameterType].Remove(priorityDelegate);
+                            _subscriptions[firstArgument.ParameterType].Remove(priorityDelegate);
                         }
                     }
                 }
             }
 
-            recivers.Remove(objectToUnregister);
+            _receivers.Remove(objectToUnregister);
         }
 
         public void ClearAll()
         {
-            subscribtions.Clear();
-            recivers.Clear();
+            _subscriptions.Clear();
+            _receivers.Clear();
+            _abortedInterceptors.Clear();
+            _unhandledInterceptors.Clear();
+            _preInterceptors.Clear();
+            _postInterceptors.Clear();
         }
     }
 }
